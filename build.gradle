@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group 'edu.nus.cs4224'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+wrapper {
+    gradleVersion = '5.6.2'
+}
+
+dependencies {
+    implementation (
+            'com.datastax.oss:java-driver-core:4.2.1',
+            'com.datastax.oss:java-driver-query-builder:4.2.1',
+            'com.datastax.oss:java-driver-mapper-runtime:4.2.1'
+    )
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    )
+}
+
+test {
+    useJUnitPlatform()
+    beforeTest { descriptor ->
+        logger.lifecycle('Running test: ' + descriptor)
+    }
+}
