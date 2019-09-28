@@ -40,7 +40,7 @@ public class OrderStatusTransaction extends BaseTransaction {
     int lastOrderID = lastOrder.getInt("o_id");
     System.out.printf("Customer's last order ID: %d, entry time: %s, carrier ID: %d\n",
         lastOrderID,
-        lastOrder.getString("o_entry_d"),
+        lastOrder.getInstant("o_entry_d").toString(),
         lastOrder.getInt("o_carrier_id"));
 
     query = String.format(CUSTOMER_LAST_ORDER_LINE, warehouseID, districtID, lastOrderID);
@@ -52,7 +52,7 @@ public class OrderStatusTransaction extends BaseTransaction {
           orderLine.getInt("ol_supply_w_id"),
           orderLine.getBigDecimal("ol_quantity").doubleValue(),
           orderLine.getBigDecimal("ol_amount").doubleValue(),
-          orderLine.getString("ol_delivery_d"));
+          orderLine.getInstant("ol_delivery_d").toString());
     }
   }
 }
