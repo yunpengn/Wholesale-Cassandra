@@ -1,5 +1,6 @@
-CREATE KEYSPACE IF NOT EXISTS whosale WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
-USE whosale;
+DROP KEYSPACE wholesale;
+CREATE KEYSPACE IF NOT EXISTS wholesale WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
+USE wholesale;
 
 DROP TABLE IF EXISTS warehouse;
 CREATE TABLE warehouse (
