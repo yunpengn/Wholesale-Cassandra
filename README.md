@@ -20,7 +20,7 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 
 - Download data from [here](https://www.comp.nus.edu.sg/~cs4224/project-files.zip) to the `data/` folder.
 - Unzip the downloaded file.
-- Create the schema by `cqlsh -f src/main/resources/schema.cql`.
+- Create the schema by `cqlsh -f src/main/resources/schema.cql --request-timeout=3600`.
 - Import data by `cqlsh -f src/main/resources/loaddata.cql`.
 
 ## Licence
