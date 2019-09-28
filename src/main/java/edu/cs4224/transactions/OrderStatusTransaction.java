@@ -46,13 +46,16 @@ public class OrderStatusTransaction extends BaseTransaction {
     query = String.format(CUSTOMER_LAST_ORDER_LINE, warehouseID, districtID, lastOrderID);
     List<Row> orderLines = executeQuery(query);
     for (Row orderLine: orderLines) {
+      String deliveryDate = orderLine.isNull("ol_delivery_d")
+          ? "Unknown" : orderLine.getInstant("ol_delivery_d").toString();
+
       System.out.printf("Order line in last order item ID: %d, supply warehouse ID: %d, "
               + "quantity: %f, price: %f, delivery date: %s\n",
           orderLine.getInt("ol_i_id"),
           orderLine.getInt("ol_supply_w_id"),
           orderLine.getBigDecimal("ol_quantity").doubleValue(),
           orderLine.getBigDecimal("ol_amount").doubleValue(),
-          orderLine.getInstant("ol_delivery_d").toString());
+          deliveryDate);
     }
   }
 }
