@@ -4,12 +4,18 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 import edu.cs4224.CqlQueryList;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class PaymentTransaction extends BaseTransaction {
 
   private final int customer_warehouse_id;
   private final int customer_district_id;
   private final int customer_id;
   private final double payment_amount;
+  private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
 
   public PaymentTransaction(final CqlSession session, final String[] parameters) {
       super(session, parameters);
@@ -44,7 +50,7 @@ public class PaymentTransaction extends BaseTransaction {
             customer_warehouse_id, customer_district_id, customer_id, customer_info.getString("C_FIRST"), customer_info.getString("C_MIDDLE"), customer_info.getString("C_LAST"),
             customer_info.getString("C_STREET_1"), customer_info.getString("C_STREET_2"), customer_info.getString("C_CITY"),
             customer_info.getString("C_STATE"), customer_info.getString("C_ZIP"), customer_info.getString("C_PHONE"),
-            customer_info.getLocalTime("C_SINCE").toString(), customer_info.getString("C_CREDIT"), customer_info.getBigDecimal("C_CREDIT_LIM").doubleValue(),
+            formatter.format(Date.from(customer_info.getInstant("C_SINCE"))), customer_info.getString("C_CREDIT"), customer_info.getBigDecimal("C_CREDIT_LIM").doubleValue(),
             customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), customer_info.getBigDecimal("C_BALANCE").doubleValue()
     ));
 
