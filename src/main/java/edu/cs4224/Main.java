@@ -1,5 +1,6 @@
 package edu.cs4224;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
@@ -14,7 +15,9 @@ import java.util.Scanner;
 public class Main {
   public static void main(String[] args) throws Exception {
     // Initializes the resources needed.
-    CqlSession session = CqlSession.builder().build();
+    CqlSession session = CqlSession.builder().
+        withKeyspace(CqlIdentifier.fromCql("wholesale")).
+        build();
     Scanner scanner = new Scanner(System.in);
     System.out.println("The system has been started.");
 
