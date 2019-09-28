@@ -5,8 +5,8 @@ cql_path="$project_path/src/main/resources"
 data_path="$project_path/data/data-files"
 
 create_schema() {
-    cd $cql_path
-    cqlsh -f schema.cql --request-timeout=3600
+    cd $project_path
+    cqlsh -f src/main/resources/schema.cql --request-timeout=3600
 }
 
 load_data() {
@@ -20,8 +20,8 @@ load_data() {
 
     sed 's:,null,:,,:g' $file > $modified
 
-    cd $cql_path
-    cqlsh -f loaddata.cql
+    cd $project_path
+    cqlsh -f src/main/resources/loaddata.cql
 
     cd $data_path
     rm $modified
