@@ -21,5 +21,5 @@ public class CqlQueryList {
   public static final String CHECK_WAREHOUSE_TAX
           = "SELECT W_TAX FROM warehouse WHERE W_ID=%d";
   public static final String CHECK_CUSTOMER_INFO
-          = "SELECT C_DISCOUNT, C_LAST, C_CREDIT FROM customer WHERE C_W_ID=%d, C_D_ID=%d, C_ID=%d";
+          = "SELECT C_DISCOUNT, C_LAST, C_CREDIT FROM customer WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
 }
