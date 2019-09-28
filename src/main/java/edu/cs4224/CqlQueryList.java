@@ -35,7 +35,7 @@ public class CqlQueryList {
   public static final String UPDATE_DISTRICT_YTD
           = "UPDATE district SET D_YTD=%f WHERE D_W_ID=%d AND D_ID=%d";
   public static final String GET_CUSTOMER_INFO
-          = "SELECT C_BALANCE, C_YTD_PAYMENT, C_PAYMENT, C_W_ID, C_D_ID, C_ID, C_FIRST, C_MIDDLE, C_LAST, C_STREET_1, C_STREET_2, C_CITY, C_STATE, C_ZIP, C_PHONE,, C_SINCE, C_CREDIT, C_CREDIT_LIM, C_DISCOUNT, C_BALANCE FROM customer WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
+          = "SELECT * FROM customer WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
   public static final String UPDATE_CUSTOMER_INFO
           = "UPDATE customer SET C_BALANCE=%f, C_YTD_PAYMENT=%f, C_PAYMENT_CNT=%d WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
 }
