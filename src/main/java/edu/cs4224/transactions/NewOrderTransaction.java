@@ -125,7 +125,7 @@ public class NewOrderTransaction extends BaseTransaction {
     System.out.println(String.format("3. O_ID: %d, O_ENTRY_D: %s", next_order_number,  order_time));
     System.out.println(String.format("4. NUM_ITEMS: %s, TOTAL_AMOUNT: %.2f", numDataLines, totalAmount));
     for (int i = 0; i < numDataLines; i++) {
-      System.out.println(String.format("\t ITEM_NUMBER: %s, I_NAME: %s, SUPPLIER_WAREHOUSE: %d, QUANTITY: %d, OL_AMOUNT: %.2f, S_QUANTITY: %d",
+      System.out.println(String.format("\t ITEM_NUMBER: %s, I_NAME: %s, SUPPLIER_WAREHOUSE: %d, QUANTITY: %d, OL_AMOUNT: %.2f, S_QUANTITY: %f",
               itemIds.get(i), itemsName.get(i), supplierWareHouse.get(i), quantity.get(i), itemsAmount.get(i), adjustedQuantities.get(i)));
     }
   }
