@@ -48,6 +48,6 @@ public class NewOrderTransaction extends BaseTransaction {
   private void createNewOrder(List<Integer> numsEach, List<Integer> supplierWareHouse, List<Integer> quantity) {
     String query = String.format(CqlQueryList.DISTRICT_NEXT_ORDER_ID, warehouseID, districtID);
     List<Row> rows = executeQuery(query);
-    System.out.println(rows.get(0));
+    System.out.println(rows.get(0).getInt("D_NEXT_O_ID"));
   }
 }
