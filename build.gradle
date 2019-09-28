@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
 }
 
-group 'edu.nus.cs4224'
+group 'edu.cs4224'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -25,6 +26,17 @@ dependencies {
     testRuntimeOnly(
             'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     )
+}
+
+shadowJar {
+    mergeServiceFiles()
+    zip64 true
+    manifest {
+        attributes(
+                'Main-Class': 'edu.cs4224.Main',
+                'version': project.version
+        )
+    }
 }
 
 test {
