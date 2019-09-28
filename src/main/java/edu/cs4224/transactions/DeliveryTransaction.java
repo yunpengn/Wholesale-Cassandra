@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class DeliveryTransaction extends BaseTransaction {
   private static final String YET_DELIVERED_ORDER
-      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id LIMIT 1";
+      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
   private static final String UPDATE_CARRIER
       = "UPDATE customer_order SET o_carrier_id = %d WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_DELIVERY_DATE
@@ -43,11 +43,14 @@ public class DeliveryTransaction extends BaseTransaction {
         }
       }
       if (yetDeliveredOrder == null) {
+        System.out.printf("Cannot find any yet-to-be-delivered order in warehouse %d district %d\n", warehouseID, i);
         break;
       }
+      int orderID = yetDeliveredOrder.getInt("o_id");
+      System.out.printf("The oldest yet-to-be-delivered order in warehouse %d district %d is %d\n",
+          warehouseID, i, orderID);
 
       // Updates the carrier.
-      int orderID = yetDeliveredOrder.getInt("o_id");
       query = String.format(UPDATE_CARRIER, carrierID, warehouseID, i, orderID);
       executeQuery(query);
 
@@ -61,6 +64,8 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
+      System.out.printf("Going to update customer %d since his/her order %d has been delivered",
+          customerID, orderID);
       query = String.format(UPDATE_CUSTOMER, totalAmount, warehouseID, i, customerID);
       executeQuery(query);
     }
