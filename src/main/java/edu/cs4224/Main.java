@@ -3,10 +3,15 @@ package edu.cs4224;
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 
-
 import edu.cs4224.transactions.BaseTransaction;
+import edu.cs4224.transactions.DeliveryTransaction;
 import edu.cs4224.transactions.NewOrderTransaction;
+import edu.cs4224.transactions.OrderStatusTransaction;
 import edu.cs4224.transactions.PaymentTransaction;
+import edu.cs4224.transactions.PopularItemTransaction;
+import edu.cs4224.transactions.RelatedCustomerTransaction;
+import edu.cs4224.transactions.StockLevelTransaction;
+import edu.cs4224.transactions.TopBalanceTransaction;
 
 import java.util.Scanner;
 
@@ -32,6 +37,24 @@ public class Main {
         break;
       case "P":
         transaction = new PaymentTransaction(session, parameters);
+        break;
+      case "D":
+        transaction = new DeliveryTransaction(session, parameters);
+        break;
+      case "O":
+        transaction = new OrderStatusTransaction(session, parameters);
+        break;
+      case "S":
+        transaction = new StockLevelTransaction(session, parameters);
+        break;
+      case "I":
+        transaction = new PopularItemTransaction(session, parameters);
+        break;
+      case "T":
+        transaction = new TopBalanceTransaction(session, parameters);
+        break;
+      case "R":
+        transaction = new RelatedCustomerTransaction(session, parameters);
         break;
       default:
         throw new Exception("Unknown transaction types");
