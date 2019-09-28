@@ -1,5 +1,4 @@
-USE whosale;
-
+USE wholesale;
 
 COPY warehouse (W_ID, W_NAME, W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP, W_TAX, W_YTD) FROM './data/data-files/warehouse.csv' WITH DELIMITER=',';
 COPY district (D_W_ID, D_ID, D_NAME, D_STREET_1, D_STREET_2, D_CITY, D_STATE, D_ZIP, D_TAX, D_YTD, D_NEXT_O_ID) FROM './data/data-files/district.csv' WITH DELIMITER=',';
