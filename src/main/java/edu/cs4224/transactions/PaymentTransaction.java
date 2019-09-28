@@ -39,6 +39,20 @@ public class PaymentTransaction extends BaseTransaction {
     executeQuery(String.format(CqlQueryList.UPDATE_CUSTOMER_INFO, customer_balance, customer_ytd_payment,
             customer_payment_cnt, customer_warehouse_id, customer_district_id, customer_id));
 
+    System.out.println("Transaction Summary: ");
+    System.out.println(String.format("1. (C_W_ID: %d, C_D_ID: %d, C_ID: %d), Name: (%s, %s, %s), Address: (%s, %s, %s, %s, %s), C_PHONE: %s, C_SINCE: %s, C_CREDIT: %s, C_CREDIT_LIM: %.2f, C_DISCOUNT: %.4f, C_BALANCE: %.2f",
+            customer_warehouse_id, customer_district_id, customer_id, customer_info.getString("C_FIRST"), customer_info.getString("C_MIDDLE"), customer_info.getString("C_LAST"),
+            customer_info.getString("C_STREET_1"), customer_info.getString("C_STREET_2"), customer_info.getString("C_CITY"),
+            customer_info.getString("C_STATE"), customer_info.getString("C_ZIP"), customer_info.getString("C_PHONE"),
+            customer_info.getLocalTime("C_SINCE").toString(), customer_info.getString("C_CREDIT"), customer_info.getBigDecimal("C_CREDIT_LIM").doubleValue(),
+            customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), customer_info.getBigDecimal("C_BALANCE").doubleValue()
+    ));
 
+    System.out.println(String.format("2. Warehouse: %s, %s, %s, %s, %s",
+            warehouse_info.getString("W_STREET_1"), warehouse_info.getString("W_STREET_2"), warehouse_info.getString("W_CITY"), warehouse_info.getString("W_STATE"), warehouse_info.getString("W_ZIP")));
+
+    System.out.println(String.format("3. District: %s, %s, %s, %s, %s",
+          district_info.getString("D_STREET_1"), district_info.getString("D_STREET_2"), district_info.getString("D_CITY"), district_info.getString("D_STATE"), district_info.getString("D_ZIP")));
+    System.out.println(String.format("4. PAYMENT: %.2f", payment_amount));
   }
 }
