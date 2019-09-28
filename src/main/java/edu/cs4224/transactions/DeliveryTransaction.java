@@ -14,7 +14,7 @@ public class DeliveryTransaction extends BaseTransaction {
   private static final String GET_ORDER_LINE_FROM_ORDER
       = "SELECT ol_number FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
   private static final String UPDATE_DELIVERY_DATE
-      = "UPDATE order_line SET ol_delivery_d = toTimestamp(now()) WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d"
+      = "UPDATE order_line SET ol_delivery_d = toTimestamp(now()) WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d "
       + "AND ol_number IN (%s)";
   private static final String ORDER_LINE_TOTAL_AMOUNT
       = "SELECT SUM(ol_amount) FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
