@@ -58,7 +58,7 @@ public class NewOrderTransaction extends BaseTransaction {
     String get_next_order_number_query = String.format(CqlQueryList.DISTRICT_INFO, warehouseID, districtID);
     Row res = executeQuery(get_next_order_number_query).get(0);
     int next_order_number = res.getInt("D_NEXT_O_ID");
-    double district_tax = res.getDouble("D_TAX");
+    double district_tax = res.getBigDecimal("D_TAX").doubleValue();
     String increment_order_number_query =  String.format(CqlQueryList.INCREMENT_NEXT_ORDER_ID, warehouseID, districtID);
     executeQuery(increment_order_number_query);
 
@@ -92,7 +92,7 @@ public class NewOrderTransaction extends BaseTransaction {
 
         String check_item_price_query = String.format(CqlQueryList.CHECK_ITEM_INFO, itemIds.get(i));
         Row item_info = executeQuery(check_item_price_query).get(0);
-        double item_price = item_info.getDouble("I_PRICE");
+        double item_price = item_info.getBigDecimal("I_PRICE").doubleValue();
         String item_name = item_info.getString("I_NAME");
         double itemAmount = quantity.get(i) * item_price;
         itemsAmount.add(itemAmount);
@@ -103,11 +103,11 @@ public class NewOrderTransaction extends BaseTransaction {
         executeQuery(create_order_line_query);
     }
     String check_warehouse_tax_query = String.format(CqlQueryList.CHECK_WAREHOUSE_TAX, warehouseID);
-    double warehouse_tax = executeQuery(check_warehouse_tax_query).get(0).getDouble("W_TAX");
+    double warehouse_tax = executeQuery(check_warehouse_tax_query).get(0).getBigDecimal("W_TAX").doubleValue();
 
     String check_customer_discount_query = String.format(CqlQueryList.CHECK_CUSTOMER_INFO, warehouseID, districtID, customerID);
     Row customer_info = executeQuery(check_customer_discount_query).get(0);
-    double user_discount = customer_info.getDouble("C_DISCOUNT");
+    double user_discount = customer_info.getBigDecimal("C_DISCOUNT").doubleValue();
     String user_last_name = customer_info.getString("C_LAST");
     String user_credit_status = customer_info.getString("C_CREDIT");
 
