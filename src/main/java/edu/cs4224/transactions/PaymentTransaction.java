@@ -9,14 +9,14 @@ public class PaymentTransaction extends BaseTransaction {
   private final int customer_warehouse_id;
   private final int customer_district_id;
   private final int customer_id;
-  private final int payment_amount;
+  private final double payment_amount;
 
   public PaymentTransaction(final CqlSession session, final String[] parameters) {
       super(session, parameters);
       customer_warehouse_id = Integer.parseInt(parameters[1]);
       customer_district_id = Integer.parseInt(parameters[2]);
       customer_id = Integer.parseInt(parameters[3]);
-      payment_amount = Integer.parseInt(parameters[4]);
+      payment_amount = Double.parseDouble(parameters[4]);
   }
 
   @Override public void execute(final String[] dataLines) {
