@@ -18,9 +18,10 @@ public class DeliveryTransaction extends BaseTransaction {
       + "AND ol_number IN (%s)";
   private static final String ORDER_LINE_TOTAL_AMOUNT
       = "SELECT SUM(ol_amount) FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
+  private static final String GET_CUSTOMER
+      = "GET c_balance, c_delivery_cnt FROM customer WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String UPDATE_CUSTOMER
-      = "UPDATE customer SET c_balance = c_balance + %f, c_delivery_cnt = c_delivery_cnt + 1 "
-      + "WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+      = "UPDATE customer SET c_balance = %f, c_delivery_cnt = %d WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final int NUM_DISTRICTS = 10;
 
   private final int warehouseID;
@@ -78,9 +79,12 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
-      System.out.printf("Going to update customer %d since his/her order %d has been delivered.",
+      query = String.format(GET_CUSTOMER, warehouseID, i, customerID);
+      Row customer = executeQuery(query).get(0);
+      System.out.printf("Going to update customer %d since his/her order %d has been delivered.\n",
           customerID, orderID);
-      query = String.format(UPDATE_CUSTOMER, totalAmount, warehouseID, i, customerID);
+      query = String.format(UPDATE_CUSTOMER, customer.getBigDecimal("c_balance").doubleValue() + totalAmount,
+          customer.getInt("c_delivery_cnt") + 1, warehouseID, i, customerID);
       executeQuery(query);
     }
   }
