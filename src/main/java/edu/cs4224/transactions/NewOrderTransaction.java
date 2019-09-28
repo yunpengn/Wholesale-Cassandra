@@ -51,10 +51,14 @@ public class NewOrderTransaction extends BaseTransaction {
   }
 
   private void createNewOrder(List<Integer> itemIds, List<Integer> supplierWareHouse, List<Integer> quantity) {
+    ArrayList<Integer> adjustedQuantities = new ArrayList<>();
+    ArrayList<Double> itemsAmount = new ArrayList<>();
+    ArrayList<String> itemsName = new ArrayList<>();
+
     String get_next_order_number_query = String.format(CqlQueryList.DISTRICT_INFO, warehouseID, districtID);
     Row res = executeQuery(get_next_order_number_query).get(0);
     int next_order_number = res.getInt("D_NEXT_O_ID");
-    double district_tax = res.getBigDecimal("D_TAX").doubleValue();
+    double district_tax = res.getDouble("D_TAX");
     String increment_order_number_query =  String.format(CqlQueryList.INCREMENT_NEXT_ORDER_ID, warehouseID, districtID);
     executeQuery(increment_order_number_query);
 
@@ -72,10 +76,6 @@ public class NewOrderTransaction extends BaseTransaction {
     String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
             warehouseID, customerID, order_time, numDataLines, isAllLocal);
     executeQuery(new_order_query);
-
-    ArrayList<Integer> adjustedQuantities = new ArrayList<>();
-    ArrayList<Double> itemsAmount = new ArrayList<>();
-    ArrayList<String> itemsName = new ArrayList<>();
 
     double totalAmount = 0;
     for (int i = 0; i < numDataLines; i++) {
