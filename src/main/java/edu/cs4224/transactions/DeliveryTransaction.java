@@ -76,15 +76,16 @@ public class DeliveryTransaction extends BaseTransaction {
       // Gets the total amount.
       query = String.format(ORDER_LINE_TOTAL_AMOUNT, warehouseID, i, orderID);
       double totalAmount = executeQuery(query).get(0).getBigDecimal(0).doubleValue();
+      System.out.printf("The total amount for this order is %f.\n", totalAmount);
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
       query = String.format(GET_CUSTOMER, warehouseID, i, customerID);
       Row customer = executeQuery(query).get(0);
-      System.out.printf("Going to update customer %d since his/her order %d has been delivered.\n",
-          customerID, orderID);
-      query = String.format(UPDATE_CUSTOMER, customer.getBigDecimal("c_balance").doubleValue() + totalAmount,
-          customer.getInt("c_delivery_cnt") + 1, warehouseID, i, customerID);
+      double newBalance = customer.getBigDecimal("c_balance").doubleValue() + totalAmount;
+      int newDeliveryCount = customer.getInt("c_delivery_cnt") + 1;
+      query = String.format(UPDATE_CUSTOMER, newBalance, newDeliveryCount, warehouseID, i, customerID);
+      System.out.printf("Going to update customer by query %s.\n", query);
       executeQuery(query);
     }
   }
