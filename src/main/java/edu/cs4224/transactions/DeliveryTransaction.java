@@ -53,7 +53,7 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Gets the total amount.
       query = String.format(ORDER_LINE_TOTAL_AMOUNT, warehouseID, i, orderID);
-      double totalAmount = executeQuery(query).get(0).getDouble(0);
+      double totalAmount = executeQuery(query).get(0).getBigDecimal(0).doubleValue();
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");

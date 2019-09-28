@@ -40,7 +40,7 @@ public class StockLevelTransaction extends BaseTransaction {
       int itemID = orderItem.getInt("ol_i_id");
       query = String.format(STOCK_BELOW_THRESHOLD, warehouseID, itemID);
       Row stock = executeQuery(query).get(0);
-      if (stock.getDouble("s_quantity") < threshold) {
+      if (stock.getBigDecimal("s_quantity").doubleValue() < threshold) {
 
       }
     }
