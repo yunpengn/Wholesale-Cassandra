@@ -19,7 +19,7 @@ public class DeliveryTransaction extends BaseTransaction {
   private static final String ORDER_LINE_TOTAL_AMOUNT
       = "SELECT SUM(ol_amount) FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
   private static final String GET_CUSTOMER
-      = "GET c_balance, c_delivery_cnt FROM customer WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+      = "SELECT c_balance, c_delivery_cnt FROM customer WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String UPDATE_CUSTOMER
       = "UPDATE customer SET c_balance = %f, c_delivery_cnt = %d WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final int NUM_DISTRICTS = 10;
