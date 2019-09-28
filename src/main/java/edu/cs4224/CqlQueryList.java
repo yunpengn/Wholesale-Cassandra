@@ -11,7 +11,7 @@ public class CqlQueryList {
   public static final String CHECK_STOCK_INFO
           = "SELECT S_QUANTITY, S_REMOTE_CNT, S_ORDER_CNT, S_YTD FROM stock WHERE S_W_ID = %d AND S_I_ID = %d";
   public static final String UPDATE_STOCK
-          = "UPDATE stock SET S_QUANTITY=%d, S_YTD=%d, S_ORDER_CNT=%d, " +
+          = "UPDATE stock SET S_QUANTITY=%f, S_YTD=%f, S_ORDER_CNT=%d, " +
           "S_REMOTE_CNT=%d WHERE S_W_ID = %d AND S_I_ID = %d";
   public static final String CHECK_ITEM_INFO
           = "SELECT I_PRICE, I_NAME FROM item WHERE I_ID = %d";

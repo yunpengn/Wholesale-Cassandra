@@ -51,7 +51,7 @@ public class NewOrderTransaction extends BaseTransaction {
   }
 
   private void createNewOrder(List<Integer> itemIds, List<Integer> supplierWareHouse, List<Integer> quantity) {
-    ArrayList<Integer> adjustedQuantities = new ArrayList<>();
+    ArrayList<Double> adjustedQuantities = new ArrayList<>();
     ArrayList<Double> itemsAmount = new ArrayList<>();
     ArrayList<String> itemsName = new ArrayList<>();
 
@@ -75,7 +75,6 @@ public class NewOrderTransaction extends BaseTransaction {
 
     String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
             warehouseID, customerID, order_time, numDataLines, isAllLocal);
-    System.out.println(new_order_query);
     executeQuery(new_order_query);
 
     double totalAmount = 0;
@@ -83,11 +82,11 @@ public class NewOrderTransaction extends BaseTransaction {
         String check_stock_quantity_query = String.format(CqlQueryList.CHECK_STOCK_INFO,
                 supplierWareHouse.get(i), itemIds.get(i));
         Row stock_info = executeQuery(check_stock_quantity_query).get(0);
-        int quantity_left = stock_info.getBigDecimal("S_QUANTITY").intValue();
+        double quantity_left = stock_info.getBigDecimal("S_QUANTITY").doubleValue();
         int order_cnt = stock_info.getInt("S_ORDER_CNT");
         int remote_cnt = stock_info.getInt("S_REMOTE_CNT");
-        int ytd = stock_info.getInt("S_YTD");
-        int adjusted_quantity = quantity_left - quantity.get(i);
+        double ytd = stock_info.getBigDecimal("S_YTD").doubleValue();
+        double adjusted_quantity = quantity_left - quantity.get(i);
         if (adjusted_quantity < 10) adjusted_quantity += 100;
         adjustedQuantities.add(adjusted_quantity);
         int remoteIncrement =  supplierWareHouse.get(i) == warehouseID ? 0 : 1;
