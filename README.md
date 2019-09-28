@@ -12,9 +12,7 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 ## Run Project on Server
 
 - Clone the repository by `git clone git@github.com:yunpengn/Wholesale-Cassandra.git`.
-- Go to the folder by `cd Wholesale-Cassandra`
-- Build the project by `./gradlew shadowJar` (this command may take some time for the first time).
-- Run the generated JAR by `java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar`.
+- Run command `./start.sh run xact_filename` where xact_filename is the path of input transaction file.
 
 ## Create Schema & Import Data
 
