@@ -59,7 +59,7 @@ public class NewOrderTransaction extends BaseTransaction {
     Row res = executeQuery(get_next_order_number_query).get(0);
     int next_order_number = res.getInt("D_NEXT_O_ID");
     double district_tax = res.getBigDecimal("D_TAX").doubleValue();
-    String increment_order_number_query =  String.format(CqlQueryList.INCREMENT_NEXT_ORDER_ID, warehouseID, districtID);
+    String increment_order_number_query =  String.format(CqlQueryList.UPDATE_NEXT_ORDER_ID, next_order_number + 1, warehouseID, districtID);
     executeQuery(increment_order_number_query);
 
     int isAllLocal = 1;
@@ -79,15 +79,19 @@ public class NewOrderTransaction extends BaseTransaction {
 
     double totalAmount = 0;
     for (int i = 0; i < numDataLines; i++) {
-        String check_stock_quantity_query = String.format(CqlQueryList.CHECK_STOCK_QUANTITY,
+        String check_stock_quantity_query = String.format(CqlQueryList.CHECK_STOCK_INFO,
                 supplierWareHouse.get(i), itemIds.get(i));
-        int quantity_left = executeQuery(check_stock_quantity_query).get(0).getBigDecimal("S_QUANTITY").intValue();
+        Row stock_info = executeQuery(check_stock_quantity_query).get(0);
+        int quantity_left = stock_info.getBigDecimal("S_QUANTITY").intValue();
+        int order_cnt = stock_info.getInt("S_ORDER_CNT");
+        int remote_cnt = stock_info.getInt("S_REMOTE_CNT");
+        int ytd = stock_info.getInt("S_YTD");
         int adjusted_quantity = quantity_left - quantity.get(i);
         if (adjusted_quantity < 10) adjusted_quantity += 100;
         adjustedQuantities.add(adjusted_quantity);
         int remoteIncrement =  supplierWareHouse.get(i) == warehouseID ? 0 : 1;
-        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, adjusted_quantity, quantity.get(i),
-                remoteIncrement, supplierWareHouse.get(i), itemIds.get(i));
+        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, adjusted_quantity, ytd + quantity.get(i),
+                order_cnt + 1, remoteIncrement + remote_cnt, supplierWareHouse.get(i), itemIds.get(i));
         executeQuery(update_stock_query);
 
         String check_item_price_query = String.format(CqlQueryList.CHECK_ITEM_INFO, itemIds.get(i));
