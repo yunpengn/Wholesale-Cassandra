@@ -16,6 +16,13 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 - Build the project by `./gradlew shadowJar` (this command may take some time for the first time).
 - Run the generated JAR by `java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar`.
 
+## Create Schema & Import Data
+
+- Download data from [here](https://www.comp.nus.edu.sg/~cs4224/project-files.zip) to the `data/` folder.
+- Unzip the downloaded file.
+- Create the schema by `cqlsh -f src/main/resources/schema.cql`.
+- Import data by `cqlsh -f src/main/resources/loaddata.cql`.
+
 ## Licence
 
 [GNU General Public Licence 3.0](LICENSE)
