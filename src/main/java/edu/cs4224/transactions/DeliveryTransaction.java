@@ -11,8 +11,11 @@ public class DeliveryTransaction extends BaseTransaction {
       = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
   private static final String UPDATE_CARRIER
       = "UPDATE customer_order SET o_carrier_id = %d WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
+  private static final String GET_ORDER_LINE_FROM_ORDER
+      = "SELECT ol_number FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
   private static final String UPDATE_DELIVERY_DATE
-      = "UPDATE order_line SET ol_delivery_d = toTimestamp(now()) WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
+      = "UPDATE order_line SET ol_delivery_d = toTimestamp(now()) WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d"
+      + "AND ol_number IN (%s)";
   private static final String ORDER_LINE_TOTAL_AMOUNT
       = "SELECT SUM(ol_amount) FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
   private static final String UPDATE_CUSTOMER
@@ -55,7 +58,17 @@ public class DeliveryTransaction extends BaseTransaction {
       executeQuery(query);
 
       // Updates the delivery date.
-      query = String.format(UPDATE_DELIVERY_DATE, warehouseID, i, orderID);
+      query = String.format(GET_ORDER_LINE_FROM_ORDER, warehouseID, i, orderID);
+      List<Row> orderLineNumbers = executeQuery(query);
+      StringBuilder builder = new StringBuilder();
+      for (int j = 0; j < orderLineNumbers.size(); j++) {
+        int orderLineID = orderLineNumbers.get(j).getInt("ol_number");
+        builder.append(orderLineID);
+        if (j != orderLineNumbers.size() - 1) {
+          builder.append(", ");
+        }
+      }
+      query = String.format(UPDATE_DELIVERY_DATE, warehouseID, i, orderID, builder.toString());
       executeQuery(query);
 
       // Gets the total amount.
