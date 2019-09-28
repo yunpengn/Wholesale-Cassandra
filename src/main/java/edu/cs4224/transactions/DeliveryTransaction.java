@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class DeliveryTransaction extends BaseTransaction {
   private static final String YET_DELIVERED_ORDER
-      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id LIMIT 1";
+      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
   private static final String UPDATE_CARRIER
       = "UPDATE customer_order SET o_carrier_id = %d WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_DELIVERY_DATE
