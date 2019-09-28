@@ -19,7 +19,7 @@ public class NewOrderTransaction extends BaseTransaction {
   private final int warehouseID;
   private final int districtID;
   private final int numDataLines;
-  private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+  private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 
   public NewOrderTransaction(final CqlSession session, final String[] parameters) {
