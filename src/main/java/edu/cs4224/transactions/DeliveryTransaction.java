@@ -35,14 +35,15 @@ public class DeliveryTransaction extends BaseTransaction {
       // Finds the oldest yet-to-be-delivered order.
       String query = String.format(YET_DELIVERED_ORDER, warehouseID, i);
       List<Row> orders = executeQuery(query);
-      Optional<Row> yetDeliveredOrder = orders.stream().
-          filter(order -> order.isNull("o_carrier_id")).findFirst();
-      if (yetDeliveredOrder.isEmpty()) {
-        continue;
-      }
+//      Optional<Row> yetDeliveredOrder = orders.stream().
+//          filter(order -> order.isNull("o_carrier_id")).findFirst();
+//      if (yetDeliveredOrder.isEmpty()) {
+//        continue;
+//      }
+      Row yetDeliveredOrder = orders.get(0);
 
       // Updates the carrier.
-      int orderID = yetDeliveredOrder.get().getInt("o_id");
+      int orderID = yetDeliveredOrder.getInt("o_id");
       query = String.format(UPDATE_CARRIER, carrierID, warehouseID, i, orderID);
       executeQuery(query);
 
@@ -55,7 +56,7 @@ public class DeliveryTransaction extends BaseTransaction {
       double totalAmount = executeQuery(query).get(0).getDouble(0);
 
       // Updates the customer.
-      int customerID = yetDeliveredOrder.get().getInt("o_c_id");
+      int customerID = yetDeliveredOrder.getInt("o_c_id");
       query = String.format(UPDATE_CUSTOMER, totalAmount, warehouseID, i, customerID);
       executeQuery(query);
     }

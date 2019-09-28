@@ -29,10 +29,19 @@ public class OrderStatusTransaction extends BaseTransaction {
   @Override public void execute(final String[] dataLines) {
     String query = String.format(GET_CUSTOMER, warehouseID, districtID, customerID);
     Row customer = executeQuery(query).get(0);
+    System.out.printf("Customer name: %s %s %s balance: %f\n",
+        customer.getString("c_first"),
+        customer.getString("c_middle"),
+        customer.getString("c_last"),
+        customer.getDouble("c_balance"));
 
     query = String.format(CUSTOMER_LAST_ORDER, warehouseID, districtID, customerID);
     Row lastOrder = executeQuery(query).get(0);
     int lastOrderID = lastOrder.getInt("o_id");
+    System.out.printf("Customer's last order ID: %d entry time: %s carrier ID: %d",
+        lastOrderID,
+        lastOrder.getString("o_entry_d"),
+        lastOrder.getInt(""));
 
     query = String.format(CUSTOMER_LAST_ORDER_LINE, warehouseID, districtID, lastOrderID);
     List<Row> orderLine = executeQuery(query);
