@@ -1,4 +1,4 @@
-DROP KEYSPACE wholesale;
+DROP KEYSPACE IF EXISTS wholesale;
 CREATE KEYSPACE IF NOT EXISTS wholesale WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
 USE wholesale;
 
