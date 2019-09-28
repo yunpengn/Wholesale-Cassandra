@@ -29,21 +29,30 @@ public class OrderStatusTransaction extends BaseTransaction {
   @Override public void execute(final String[] dataLines) {
     String query = String.format(GET_CUSTOMER, warehouseID, districtID, customerID);
     Row customer = executeQuery(query).get(0);
-    System.out.printf("Customer name: %s %s %s balance: %f\n",
+    System.out.printf("Customer name: %s %s %s, balance: %f\n",
         customer.getString("c_first"),
         customer.getString("c_middle"),
         customer.getString("c_last"),
-        customer.getDouble("c_balance"));
+        customer.getBigDecimal("c_balance").doubleValue());
 
     query = String.format(CUSTOMER_LAST_ORDER, warehouseID, districtID, customerID);
     Row lastOrder = executeQuery(query).get(0);
     int lastOrderID = lastOrder.getInt("o_id");
-    System.out.printf("Customer's last order ID: %d entry time: %s carrier ID: %d",
+    System.out.printf("Customer's last order ID: %d, entry time: %s, carrier ID: %d\n",
         lastOrderID,
         lastOrder.getString("o_entry_d"),
-        lastOrder.getInt(""));
+        lastOrder.getInt("o_carrier_id"));
 
     query = String.format(CUSTOMER_LAST_ORDER_LINE, warehouseID, districtID, lastOrderID);
-    List<Row> orderLine = executeQuery(query);
+    List<Row> orderLines = executeQuery(query);
+    for (Row orderLine: orderLines) {
+      System.out.printf("Order line in last order item ID: %d, supply warehouse ID: %d, "
+              + "quantity: %f, price: %f, delivery date: %s\n",
+          orderLine.getInt("ol_i_id"),
+          orderLine.getInt("ol_supply_w_id"),
+          orderLine.getBigDecimal("ol_quantity").doubleValue(),
+          orderLine.getBigDecimal("ol_amount").doubleValue(),
+          orderLine.getString("ol_delivery_d"));
+    }
   }
 }
