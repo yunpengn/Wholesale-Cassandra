@@ -1,12 +1,20 @@
 package edu.cs4224.transactions;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+
+import java.util.List;
+
 /**
  * BaseTransaction is base class for all different transactions.
  */
 public abstract class BaseTransaction {
   private final String[] parameters;
+  private final CqlSession session;
 
-  public BaseTransaction(final String[] parameters) {
+  public BaseTransaction(final CqlSession session, final String[] parameters) {
+    this.session = session;
     this.parameters = parameters;
   }
 
@@ -25,4 +33,9 @@ public abstract class BaseTransaction {
    * @param dataLines are the lines of input data.
    */
   public abstract void execute(String[] dataLines);
+
+  protected List<Row> executeQuery(String query) {
+    ResultSet resultSet = session.execute(query);
+    return resultSet.all();
+  }
 }

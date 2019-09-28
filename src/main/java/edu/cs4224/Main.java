@@ -27,10 +27,10 @@ public class Main {
       BaseTransaction transaction;
       switch (parameters[0]) {
       case "N":
-        transaction = new NewOrderTransaction(parameters);
+        transaction = new NewOrderTransaction(session, parameters);
         break;
       case "P":
-        transaction = new PaymentTransaction(parameters);
+        transaction = new PaymentTransaction(session, parameters);
         break;
       default:
         throw new Exception("Unknown transaction types");
@@ -50,10 +50,5 @@ public class Main {
     // Closes the opened resources.
     session.close();
     scanner.close();
-  }
-
-  private static List<Row> executeQuery(CqlSession session, String query) {
-    ResultSet resultSet = session.execute(query);
-    return resultSet.all();
   }
 }
