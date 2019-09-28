@@ -2,14 +2,12 @@ package edu.cs4224;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
+
 
 import edu.cs4224.transactions.BaseTransaction;
 import edu.cs4224.transactions.NewOrderTransaction;
 import edu.cs4224.transactions.PaymentTransaction;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
