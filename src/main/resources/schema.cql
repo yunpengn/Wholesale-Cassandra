@@ -27,8 +27,8 @@ CREATE TABLE district_w (
 	// D_STATE text,
 	// D_ZIP text,
 	// D_TAX decimal,
-	D_YTD decimal,
-	D_NEXT_O_ID int,
+	D_YTD counter,
+	D_NEXT_O_ID counter,
 	PRIMARY KEY ((D_W_ID, D_ID))
 );
 
@@ -66,10 +66,10 @@ CREATE TABLE customer_w (
 	// C_CREDIT text,
 	// C_CREDIT_LIM decimal,
 	// C_DISCOUNT decimal,
-	C_BALANCE decimal,
-	C_YTD_PAYMENT float,
-	C_PAYMENT_CNT int,
-	C_DELIVERY_CNT int,
+	C_BALANCE counter,
+	C_YTD_PAYMENT counter,
+	C_PAYMENT_CNT counter,
+	C_DELIVERY_CNT counter,
 	// C_DATA text,
 	PRIMARY KEY ((C_W_ID, C_D_ID, C_ID))
 );
@@ -106,7 +106,7 @@ CREATE TABLE customer_balance (
 	CB_W_ID int,
 	CB_D_ID int, 
 	CB_ID int,
-	PRIMARY KEY (CB_BALANCE, C_W_ID, C_D_ID, C_ID)
+	PRIMARY KEY (CB_BALANCE, CB_W_ID, CB_D_ID, CB_ID)
 );
 
 // a second version which sorts on table rather than on query
@@ -116,7 +116,7 @@ CREATE TABLE customer_balance_v2 (
 	CB_D_ID int,
 	CB_BALANCE decimal,
 	CB_ID int,
-	PRIMARY KEY ((C_W_ID, C_D_ID), CB_BALANCE)
+	PRIMARY KEY ((CB_W_ID, CB_D_ID), CB_BALANCE)
 ) WITH CLUSTERING ORDER BY (CB_BALANCE DESC);
 
 DROP TABLE IF EXISTS customer_order;
@@ -147,10 +147,10 @@ DROP TABLE IF EXISTS stock_w;
 CREATE TABLE stock_w (
 	S_W_ID int,
 	S_I_ID int,
-	S_QUANTITY decimal, 
-	S_YTD decimal, 
-	S_ORDER_CNT int, 
-	S_REMOTE_CNT int,
+	S_QUANTITY counter,
+	S_YTD counter,
+	S_ORDER_CNT counter,
+	S_REMOTE_CNT counter,
 	// S_DIST_01 text,
 	// S_DIST_02 text,
 	// S_DIST_03 text,
