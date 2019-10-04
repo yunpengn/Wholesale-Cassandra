@@ -108,8 +108,8 @@ public class Main {
     System.err.printf("Total elapsed time: %ds\n", totalTime);
     System.err.printf("Average transaction latency: %dms\n", toMs(sum / count));
     System.err.printf("Median transaction latency: %dms\n", toMs(getMedian(latency)));
-    System.err.printf("95th percentile transaction latency: %dms\n", 0);
-    System.err.printf("99th percentile transaction latency: %dms\n", 0);
+    System.err.printf("95th percentile transaction latency: %dms\n", toMs(getPercentile(latency, 95)));
+    System.err.printf("99th percentile transaction latency: %dms\n", toMs(getPercentile(latency, 99)));
     System.err.println("======================================================================");
   }
 
@@ -125,5 +125,13 @@ public class Main {
       long mid2 = list.get(list.size() / 2 - 1);
       return (mid + mid2) / 2;
     }
+  }
+
+  /**
+   * Assumes the input list is already sorted.
+   */
+  private static long getPercentile(List<Long> list, int percentile) {
+    int i = list.size() * percentile / 100;
+    return list.get(i);
   }
 }
