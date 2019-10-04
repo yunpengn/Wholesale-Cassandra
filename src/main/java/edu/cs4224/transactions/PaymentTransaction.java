@@ -2,6 +2,7 @@ package edu.cs4224.transactions;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
+
 import edu.cs4224.CqlQueryList;
 
 import java.text.Format;

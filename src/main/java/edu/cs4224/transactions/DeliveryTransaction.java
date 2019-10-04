@@ -4,7 +4,6 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
 import java.util.List;
-import java.util.Optional;
 
 public class DeliveryTransaction extends BaseTransaction {
   private static final String YET_DELIVERED_ORDER

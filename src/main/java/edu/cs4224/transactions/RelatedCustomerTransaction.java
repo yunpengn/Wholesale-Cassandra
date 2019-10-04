@@ -1,11 +1,6 @@
 package edu.cs4224.transactions;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.Row;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class RelatedCustomerTransaction extends BaseTransaction {
 

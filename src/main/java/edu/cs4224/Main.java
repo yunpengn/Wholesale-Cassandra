@@ -14,6 +14,7 @@ import edu.cs4224.transactions.StockLevelTransaction;
 import edu.cs4224.transactions.TopBalanceTransaction;
 
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
   public static void main(String[] args) throws Exception {
@@ -24,7 +25,13 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     System.out.println("The system has been started.");
 
+    // Some variables for statistics.
+    int txCount = 0;
+    long start;
+    long end;
+
     // Reads the input line-by-line.
+    start = System.nanoTime();
     while (scanner.hasNext()) {
       String line = scanner.nextLine();
       String[] parameters = line.split(",");
@@ -69,10 +76,28 @@ public class Main {
 
       // Executes the transaction.
       transaction.execute(dataLines);
+      txCount++;
     }
+    end = System.nanoTime();
 
     // Closes the opened resources.
     session.close();
     scanner.close();
+
+    // Generates the performance report.
+    long elapsedTime = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);
+    generatePerformanceReport(txCount, elapsedTime);
+  }
+
+  private static void generatePerformanceReport(int count, long totalTime) {
+    System.err.println("\n======================================================================");
+    System.err.println("Performance report: ");
+    System.err.printf("Total number of transactions processed: %d\n", count);
+    System.err.printf("Total elapsed time: %ds\n", totalTime);
+    System.err.printf("Average transaction latency: %dms\n", 0);
+    System.err.printf("Median transaction latency: %dms\n", 0);
+    System.err.printf("95th percentile transaction latency: %dms\n", 0);
+    System.err.printf("99th percentile transaction latency: %dms\n", 0);
+    System.err.println("======================================================================");
   }
 }
