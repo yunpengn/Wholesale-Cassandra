@@ -49,8 +49,7 @@ public class DataLoader implements Closeable {
                 (wWriter, data) -> {
                     addDistrict(data[0], data[1]);
 
-                    data[9] = ((int) Float.parseFloat(data[9]) * 1000) + "";
-                    data[10] = ((int) Float.parseFloat(data[9]) * 1000) + "";
+                    data[9] = ((int) Float.parseFloat(data[9]) * 1000) + ""; // D_YTD
 
                     wWriter.write(createCSVRow(data, 1, 2, 10, 11));
                 }, (rWriter, data) -> {
@@ -248,8 +247,6 @@ public class DataLoader implements Closeable {
                 builder.append(cql);
                 builder.append(";\n");
             }
-            System.out.println("[run cql]: \n" + builder.toString());
-
             writer.write(builder.toString());
             writer.flush();
         }
