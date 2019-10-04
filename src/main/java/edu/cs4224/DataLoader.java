@@ -258,10 +258,22 @@ public class DataLoader implements Closeable {
     }
 
     private void executeCommand(String command) throws Exception {
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        pb.start().waitFor();
+        Runtime rt = Runtime.getRuntime();
+        Process proc = rt.exec(command);
+
+        BufferedReader inReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        BufferedReader errReader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+        String line;
+        while ((line = inReader.readLine()) != null)
+            System.out.println(line);
+
+        while ((line = errReader.readLine()) != null)
+            System.out.println(line);
+        proc.waitFor();
+
+        inReader.close();
+        errReader.close();
     }
 
     private void cleanup() {
