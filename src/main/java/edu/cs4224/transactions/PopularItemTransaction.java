@@ -27,9 +27,9 @@ public class PopularItemTransaction extends BaseTransaction {
     public PopularItemTransaction(final CqlSession session, final String[] parameters) {
         super(session, parameters);
 
-        W_ID = Integer.parseInt(parameters[0]);
-        D_ID = Integer.parseInt(parameters[1]);
-        L = Integer.parseInt(parameters[2]);
+        W_ID = Integer.parseInt(parameters[1]);
+        D_ID = Integer.parseInt(parameters[2]);
+        L = Integer.parseInt(parameters[3]);
     }
 
     @Override

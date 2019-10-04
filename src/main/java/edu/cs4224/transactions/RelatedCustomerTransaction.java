@@ -15,9 +15,9 @@ public class RelatedCustomerTransaction extends BaseTransaction {
     public RelatedCustomerTransaction(final CqlSession session, final String[] parameters) {
         super(session, parameters);
 
-        C_W_ID = Integer.parseInt(parameters[0]);
-        C_D_ID = Integer.parseInt(parameters[1]);
-        C_ID = Integer.parseInt(parameters[2]);
+        C_W_ID = Integer.parseInt(parameters[1]);
+        C_D_ID = Integer.parseInt(parameters[2]);
+        C_ID = Integer.parseInt(parameters[3]);
     }
 
     @Override
