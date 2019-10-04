@@ -40,7 +40,7 @@ public class DataLoader implements Closeable {
     private void warehouse() throws Exception {
         executeCQLCommand(
                 "USE wholesale",
-                "warehouse (W_ID, W_NAME, W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP, W_TAX, W_YTD) FROM './data/data-files/warehouse.csv' WITH DELIMITER=','"
+                "COPY warehouse (W_ID, W_NAME, W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP, W_TAX, W_YTD) FROM './data/data-files/warehouse.csv' WITH DELIMITER=','"
         );
     }
 
@@ -253,6 +253,7 @@ public class DataLoader implements Closeable {
     }
 
     private void executeCommand(String command) throws Exception {
+        System.out.println("execute command: " + command);
         Runtime rt = Runtime.getRuntime();
         Process proc = rt.exec(command);
 
@@ -267,8 +268,14 @@ public class DataLoader implements Closeable {
     }
 
     private void cleanup() {
-        File file = new File("data/temp");
-        file.delete();
+        File folder = new File("data/temp");
+
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file: files) {
+                file.delete();
+            }
+        }
     }
 
     @Override
