@@ -16,7 +16,7 @@ CREATE TABLE warehouse (
 	PRIMARY KEY (W_ID)
 );
 
-DROP TABLE IF EXISTS distric_w;
+DROP TABLE IF EXISTS district_w;
 CREATE TABLE district_w (
 	D_W_ID int,
 	D_ID int,
