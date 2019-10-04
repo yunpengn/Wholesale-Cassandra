@@ -13,6 +13,9 @@ import edu.cs4224.transactions.RelatedCustomerTransaction;
 import edu.cs4224.transactions.StockLevelTransaction;
 import edu.cs4224.transactions.TopBalanceTransaction;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +29,8 @@ public class Main {
     System.out.println("The system has been started.");
 
     // Some variables for statistics.
-    int txCount = 0;
-    long start;
-    long end;
+    List<Long> latency = new ArrayList<>();
+    long start, end, txStart, txEnd, elapsedTime;
 
     // Reads the input line-by-line.
     start = System.nanoTime();
@@ -75,8 +77,13 @@ public class Main {
       }
 
       // Executes the transaction.
+      txStart = System.nanoTime();
       transaction.execute(dataLines);
-      txCount++;
+      txEnd = System.nanoTime();
+
+      // Updates the statistics.
+      elapsedTime = TimeUnit.SECONDS.convert(txEnd - txStart, TimeUnit.NANOSECONDS);
+      latency.add(elapsedTime);
     }
     end = System.nanoTime();
 
@@ -85,19 +92,38 @@ public class Main {
     scanner.close();
 
     // Generates the performance report.
-    long elapsedTime = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);
-    generatePerformanceReport(txCount, elapsedTime);
+    elapsedTime = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);
+    generatePerformanceReport(latency, elapsedTime);
   }
 
-  private static void generatePerformanceReport(int count, long totalTime) {
+  private static void generatePerformanceReport(List<Long> latency, long totalTime) {
+    // Performs some mathematics here.
+    Collections.sort(latency);
+    int count = latency.size();
+    long sum = latency.stream().mapToLong(a -> a).sum();
+
     System.err.println("\n======================================================================");
     System.err.println("Performance report: ");
     System.err.printf("Total number of transactions processed: %d\n", count);
     System.err.printf("Total elapsed time: %ds\n", totalTime);
-    System.err.printf("Average transaction latency: %dms\n", 0);
-    System.err.printf("Median transaction latency: %dms\n", 0);
+    System.err.printf("Average transaction latency: %dms\n", toMs(sum / count));
+    System.err.printf("Median transaction latency: %dms\n", toMs(getMedian(latency)));
     System.err.printf("95th percentile transaction latency: %dms\n", 0);
     System.err.printf("99th percentile transaction latency: %dms\n", 0);
     System.err.println("======================================================================");
+  }
+
+  private static long toMs(long nanoSeconds) {
+    return TimeUnit.MILLISECONDS.convert(nanoSeconds, TimeUnit.NANOSECONDS);
+  }
+
+  private static long getMedian(List<Long> list) {
+    long mid = list.get(list.size() / 2);
+    if (list.size() % 2 != 0) {
+      return mid;
+    } else {
+      long mid2 = list.get(list.size() / 2 - 1);
+      return (mid + mid2) / 2;
+    }
   }
 }
