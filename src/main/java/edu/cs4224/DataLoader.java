@@ -243,9 +243,14 @@ public class DataLoader implements Closeable {
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter("data/temp/temp.cql"))
         ) {
+            StringBuilder builder = new StringBuilder();
             for (String cql : cqls) {
-                writer.write(cql + ";\n");
+                builder.append(cql);
+                builder.append(";\n");
             }
+            System.out.println("[run cql]: \n" + builder.toString());
+
+            writer.write(builder.toString());
             writer.flush();
         }
 
@@ -253,18 +258,10 @@ public class DataLoader implements Closeable {
     }
 
     private void executeCommand(String command) throws Exception {
-        System.out.println("execute command: " + command);
-        Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec(command);
-
-        InputStream stderr = proc.getErrorStream();
-        InputStreamReader isr = new InputStreamReader(stderr);
-        BufferedReader br = new BufferedReader(isr);
-
-        String line;
-        while ((line = br.readLine()) != null)
-            System.out.println(line);
-        proc.waitFor();
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+        pb.start().waitFor();
     }
 
     private void cleanup() {
