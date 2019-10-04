@@ -12,25 +12,14 @@ run() {
 
 create_schema() {
     cd $project_path
-    cqlsh -f src/main/resources/schema.cql --request-timeout=3600
+    ./gradlew shadowJar
+    java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar createschema
 }
 
 load_data() {
-    cd $data_path
-    file="order-line.csv"
-    modified="modified-order-line.csv"
-
-    if [[ -f $modified ]]; then
-        rm $modified
-    fi
-
-    sed 's:,null,:,,:g' $file > $modified
-
     cd $project_path
-    cqlsh -f src/main/resources/loaddata.cql
-
-    cd $data_path
-    rm $modified
+    ./gradlew shadowJar
+    java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar loaddata
 }
 
 if [[ "$1" == "run" ]]; then

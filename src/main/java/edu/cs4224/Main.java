@@ -13,6 +13,7 @@ import edu.cs4224.transactions.RelatedCustomerTransaction;
 import edu.cs4224.transactions.StockLevelTransaction;
 import edu.cs4224.transactions.TopBalanceTransaction;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,24 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
   public static void main(String[] args) throws Exception {
+    if (args.length != 0) {
+      try(DataLoader loader = new DataLoader()) {
+        switch (args[0]) {
+          case "createschema":
+            System.out.println("start to load schema");
+            loader.loadSchema();
+            break;
+          case "loaddata":
+            System.out.println("start to load data");
+            loader.loadData();
+            break;
+          default:
+            throw new Exception("Unknown command");
+        }
+      }
+      return;
+    }
+
     // Initializes the resources needed.
     CqlSession session = CqlSession.builder().
         withKeyspace(CqlIdentifier.fromCql("wholesale")).

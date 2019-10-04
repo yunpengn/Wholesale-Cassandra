@@ -124,12 +124,12 @@ CREATE TABLE customer_order (
 	O_W_ID int,
 	O_D_ID int, 
 	O_ID int,
-	O_L_INFO text,  // order_line json info
 	O_C_ID int,
 	O_CARRIER_ID int,
 	O_OL_CNT decimal,
 	O_ALL_LOCAL decimal,
 	O_ENTRY_D timestamp,
+	O_L_INFO text,  // order_line json info
 	PRIMARY KEY ((O_W_ID, O_D_ID, O_ID)),
 );
 
@@ -141,6 +141,21 @@ CREATE TABLE item (
 	I_IM_ID int, 
 	I_DATA text,
 	PRIMARY KEY (I_ID)
+);
+
+DROP TABLE IF EXISTS order_line;
+CREATE TABLE order_line (
+	OL_W_ID int,
+	OL_D_ID int,
+	OL_O_ID int,
+	OL_NUMBER int,
+	OL_I_ID int,
+	OL_DELIVERY_D timestamp,
+	OL_AMOUNT decimal,
+	OL_SUPPLY_W_ID int,
+	OL_QUANTITY decimal,
+	OL_DIST_INFO text,
+	PRIMARY KEY ((OL_W_ID, OL_D_ID, OL_O_ID, OL_NUMBER))
 );
 
 DROP TABLE IF EXISTS stock_w;
