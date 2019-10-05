@@ -11,7 +11,7 @@ schedule_job() {
   input_file="data/xact-files/$((jobID + 1)).txt"
   stdout_file="log/$((jobID + 1)).out.log"
   stderr_file="log/$((jobID + 1)).err.log"
-  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar ${input_file} > ${stdout_file} 2> ${stderr_file} &"
+  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar < ${input_file} > ${stdout_file} 2> ${stderr_file} &"
   echo "Have runned job ID=$((jobID + 1)) with input from ${input_file}."
 }
 
@@ -20,7 +20,8 @@ schedule_experiment() {
   # Builds on each machine.
   for ((c=0; c<5; c++)); do
     machineID="xcnd$((25 + $c % 5))"
-#    ssh $machineID 'cd /temp/cs4224f/Wholesale-Cassandra && git pull && ./gradlew shadowJar'
+    ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && rm -rf log && mkdir log"
+#    ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && git pull && ./gradlew shadowJar"
     echo "Have built on machine ID=${machineID}."
   done
 
