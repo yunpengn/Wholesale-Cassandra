@@ -33,18 +33,16 @@ public class PaymentTransaction extends BaseTransaction {
 
     Row district_info = executeQuery(String.format(CqlQueryList.GET_DISTRICT_INFO, customer_warehouse_id,
             customer_district_id)).get(0);
-    double district_ytd = district_info.getBigDecimal("D_YTD").doubleValue();
-    executeQuery(String.format(CqlQueryList.UPDATE_DISTRICT_YTD, district_ytd + payment_amount, customer_warehouse_id,
+    executeQuery(String.format(CqlQueryList.UPDATE_DISTRICT_YTD, payment_amount, customer_warehouse_id,
             customer_district_id));
 
     Row customer_info = executeQuery(String.format(CqlQueryList.GET_CUSTOMER_INFO, customer_warehouse_id,
             customer_district_id, customer_id)).get(0);
-    double customer_balance = customer_info.getBigDecimal("C_BALANCE").doubleValue();
-    float customer_ytd_payment = customer_info.getFloat("C_YTD_PAYMENT");
-    int customer_payment_cnt = customer_info.getInt("C_PAYMENT_CNT");
 
-    executeQuery(String.format(CqlQueryList.UPDATE_CUSTOMER_INFO, customer_balance, customer_ytd_payment,
-            customer_payment_cnt, customer_warehouse_id, customer_district_id, customer_id));
+    executeQuery(String.format(CqlQueryList.UPDATE_CUSTOMER_INFO, payment_amount, payment_amount,
+            customer_warehouse_id, customer_district_id, customer_id));
+    Row customer_balance = executeQuery(String.format(CqlQueryList.GET_CUSTOMER_BALANCE, customer_warehouse_id, customer_district_id, customer_id)).get(0);
+    double balance = customer_balance.getBigDecimal("C_BALANCE").doubleValue();
 
     System.out.println("Transaction Summary: ");
     System.out.println(String.format("1. (C_W_ID: %d, C_D_ID: %d, C_ID: %d), Name: (%s, %s, %s), Address: (%s, %s, %s, %s, %s), C_PHONE: %s, C_SINCE: %s, C_CREDIT: %s, C_CREDIT_LIM: %.2f, C_DISCOUNT: %.4f, C_BALANCE: %.2f",
@@ -52,7 +50,7 @@ public class PaymentTransaction extends BaseTransaction {
             customer_info.getString("C_STREET_1"), customer_info.getString("C_STREET_2"), customer_info.getString("C_CITY"),
             customer_info.getString("C_STATE"), customer_info.getString("C_ZIP"), customer_info.getString("C_PHONE"),
             formatter.format(Date.from(customer_info.getInstant("C_SINCE"))), customer_info.getString("C_CREDIT"), customer_info.getBigDecimal("C_CREDIT_LIM").doubleValue(),
-            customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), customer_info.getBigDecimal("C_BALANCE").doubleValue()
+            customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), balance
     ));
 
     System.out.println(String.format("2. Warehouse: %s, %s, %s, %s, %s",

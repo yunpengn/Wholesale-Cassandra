@@ -55,11 +55,14 @@ public class NewOrderTransaction extends BaseTransaction {
     ArrayList<Double> itemsAmount = new ArrayList<>();
     ArrayList<String> itemsName = new ArrayList<>();
 
-    String get_next_order_number_query = String.format(CqlQueryList.DISTRICT_INFO, warehouseID, districtID);
+    String get_next_order_number_query = String.format(CqlQueryList.DISTRICT_NEXT_O_ID, warehouseID, districtID);
     Row res = executeQuery(get_next_order_number_query).get(0);
     int next_order_number = res.getInt("D_NEXT_O_ID");
+
+    String get_district_tax_query = String.format(CqlQueryList.DISTRICT_INFO, warehouseID, districtID);
+    res = executeQuery(get_district_tax_query).get(0);
     double district_tax = res.getBigDecimal("D_TAX").doubleValue();
-    String increment_order_number_query =  String.format(CqlQueryList.UPDATE_NEXT_ORDER_ID, next_order_number + 1, warehouseID, districtID);
+    String increment_order_number_query =  String.format(CqlQueryList.UPDATE_NEXT_ORDER_ID, warehouseID, districtID);
     executeQuery(increment_order_number_query);
 
     int isAllLocal = 1;
@@ -74,7 +77,7 @@ public class NewOrderTransaction extends BaseTransaction {
     String order_time = formatter.format(cur);
 
     String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
-            warehouseID, customerID, order_time, numDataLines, isAllLocal);
+            warehouseID, customerID, order_time, numDataLines, isAllLocal, "{}");
     executeQuery(new_order_query);
 
     double totalAmount = 0;
@@ -83,15 +86,12 @@ public class NewOrderTransaction extends BaseTransaction {
                 supplierWareHouse.get(i), itemIds.get(i));
         Row stock_info = executeQuery(check_stock_quantity_query).get(0);
         double quantity_left = stock_info.getBigDecimal("S_QUANTITY").doubleValue();
-        int order_cnt = stock_info.getInt("S_ORDER_CNT");
-        int remote_cnt = stock_info.getInt("S_REMOTE_CNT");
-        double ytd = stock_info.getBigDecimal("S_YTD").doubleValue();
         double adjusted_quantity = quantity_left - quantity.get(i);
         if (adjusted_quantity < 10) adjusted_quantity += 100;
         adjustedQuantities.add(adjusted_quantity);
         int remoteIncrement =  supplierWareHouse.get(i) == warehouseID ? 0 : 1;
-        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, adjusted_quantity, ytd + quantity.get(i),
-                order_cnt + 1, remoteIncrement + remote_cnt, supplierWareHouse.get(i), itemIds.get(i));
+        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, adjusted_quantity, (float)quantity.get(i),
+                1, remoteIncrement, supplierWareHouse.get(i), itemIds.get(i));
         executeQuery(update_stock_query);
 
         String check_item_price_query = String.format(CqlQueryList.CHECK_ITEM_INFO, itemIds.get(i));
