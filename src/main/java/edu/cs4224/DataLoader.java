@@ -39,7 +39,7 @@ public class DataLoader implements Closeable {
 //        item();
 //        order_line();
 //        customer_order();
-        stock();
+//        stock();
         appendNextDeliveryID();
     }
 
