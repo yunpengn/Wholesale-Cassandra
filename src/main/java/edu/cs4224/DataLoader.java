@@ -217,7 +217,7 @@ public class DataLoader implements Closeable {
         for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
             int C_W_ID = entry.getKey();
             for (int C_D_ID : entry.getValue()) {
-                String query = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
+                String query = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_id";
                 List<Row> orders = session.execute(String.format(query, C_W_ID, C_D_ID)).all();
 
                 int min = Integer.MAX_VALUE;
