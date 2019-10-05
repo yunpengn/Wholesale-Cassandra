@@ -31,14 +31,14 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-        warehouse();
-        district();
-        customer();
+//        warehouse();
+//        district();
+//        customer();
         item();
-        order_line();
-        customer_order();
-        stock();
-        appendNextDeliveryID();
+//        order_line();
+//        customer_order();
+//        stock();
+//        appendNextDeliveryID();
         addItemOrderList();
     }
 

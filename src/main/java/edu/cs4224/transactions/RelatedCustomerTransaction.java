@@ -52,8 +52,6 @@ public class RelatedCustomerTransaction extends BaseTransaction {
                 Set<String> checkSet = new HashSet<>();
 
                 for (String orderInfo: ordersSet) {
-                    System.out.println(orderInfo);
-                    
                     String[] infos = orderInfo.split("-");
                     int warehoseID = Integer.parseInt(infos[0]);
                     int districtID = Integer.parseInt(infos[1]);
