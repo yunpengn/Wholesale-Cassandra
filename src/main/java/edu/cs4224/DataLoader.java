@@ -201,7 +201,8 @@ public class DataLoader implements Closeable {
                 String customerID = parts[3];
                 String infoStr = String.format("'%s-%s-%s-%s'", warehouseID, districtID, orderID, customerID);
 
-                System.out.println(parts[8]);
+                System.out.println("+++ row" + row);
+                System.out.println(Arrays.toString(parts));
 
                 OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(parts[8]);
                 infoMap.values().stream().map(OrderlineInfo::getId).forEach(itemID -> {
