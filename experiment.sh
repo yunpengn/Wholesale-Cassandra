@@ -19,8 +19,8 @@ schedule_job() {
 schedule_experiment() {
   # Builds on each machine.
   for ((c=0; c<5; c++)); do
-    machineID="xcnd$((25 + $jobID % 5))"
-    ssh $machineID 'cd /temp/cs4224f/Wholesale-Cassandra && ./gradlew shadowJar'
+    machineID="xcnd$((25 + $c % 5))"
+    ssh $machineID 'cd /temp/cs4224f/Wholesale-Cassandra && git pull && ./gradlew shadowJar'
     echo "Have built on machine ID=${machineID}."
   done
 
@@ -31,4 +31,5 @@ schedule_experiment() {
 }
 
 # Schedules an experiment.
+echo "Begins an experiment with size=$1"
 schedule_experiment $1
