@@ -31,5 +31,9 @@ schedule_experiment() {
 }
 
 # Schedules an experiment.
+if [[ $1 == "" ]]; then
+  echo "Please specify parameter."
+  exit
+fi
 echo "Begins an experiment with size=$1"
 schedule_experiment $1
