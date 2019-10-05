@@ -36,7 +36,7 @@ public class DataLoader implements Closeable {
         customer();
 //        customer_balance();
 //        customer_balance_v2();
-//        item();
+        item();
 //        order_line();
 //        customer_order();
 //        stock();
@@ -92,7 +92,7 @@ public class DataLoader implements Closeable {
         );
         executeCQLCommand(
                 "USE wholesale",
-                "COPY customer_w (C_W_ID, C_D_ID, C_ID, C_FIRST, C_MIDDLE, C_LAST, C_STREET_1, C_STREET_2, C_CITY, C_STATE, C_ZIP, C_PHONE, C_SINCE, C_CREDIT, C_CREDIT_LIM, C_DISCOUNT, C_DATA) FROM './data/temp/customer_w.csv' WITH DELIMITER=','"
+                "COPY customer_r (C_W_ID, C_D_ID, C_ID, C_FIRST, C_MIDDLE, C_LAST, C_STREET_1, C_STREET_2, C_CITY, C_STATE, C_ZIP, C_PHONE, C_SINCE, C_CREDIT, C_CREDIT_LIM, C_DISCOUNT, C_DATA) FROM './data/temp/customer_w.csv' WITH DELIMITER=','"
         );
     }
 
