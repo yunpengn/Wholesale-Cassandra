@@ -194,15 +194,12 @@ public class DataLoader implements Closeable {
             Map<Integer, Set<String>> toOrderList = new HashMap<>();
 
             while ((row = reader.readLine()) != null) {
-                String[] parts = row.split("|");
+                String[] parts = row.split("\\|");
                 String warehouseID = parts[0];
                 String districtID = parts[1];
                 String orderID = parts[2];
                 String customerID = parts[3];
                 String infoStr = String.format("'%s-%s-%s-%s'", warehouseID, districtID, orderID, customerID);
-
-                System.out.println("+++ row" + row);
-                System.out.println(Arrays.toString(parts));
 
                 OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(parts[8]);
                 infoMap.values().stream().map(OrderlineInfo::getId).forEach(itemID -> {
