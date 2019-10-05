@@ -122,7 +122,7 @@ CREATE TABLE item (
 	I_PRICE decimal, 
 	I_IM_ID int, 
 	I_DATA text,
-	I_O_ID_LIST set<int>,
+	I_O_ID_LIST set<text>,
 	PRIMARY KEY (I_ID)
 );
 
