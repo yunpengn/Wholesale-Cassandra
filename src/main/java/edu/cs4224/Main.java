@@ -107,7 +107,10 @@ public class Main {
 
       // Executes the transaction.
       txStart = System.nanoTime();
+      System.out.println("\n======================================================================");
+      System.out.printf("Transaction ID: %d\n", latency.size());
       transaction.execute(dataLines);
+      System.out.println("======================================================================");
       txEnd = System.nanoTime();
 
       // Updates the statistics.
