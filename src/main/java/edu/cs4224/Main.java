@@ -2,6 +2,7 @@ package edu.cs4224;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.google.gson.Gson;
 
 import edu.cs4224.transactions.BaseTransaction;
 import edu.cs4224.transactions.DeliveryTransaction;
@@ -102,7 +103,7 @@ public class Main {
       txEnd = System.nanoTime();
 
       // Updates the statistics.
-      elapsedTime = TimeUnit.SECONDS.convert(txEnd - txStart, TimeUnit.NANOSECONDS);
+      elapsedTime = txEnd - txStart;
       latency.add(elapsedTime);
     }
     end = System.nanoTime();
@@ -121,16 +122,20 @@ public class Main {
   }
 
   private static void generatePerformanceReport(List<Long> latency, long totalTime) {
+    // Some magic.
+    totalTime = Math.max(totalTime, 1);
+
     // Performs some mathematics here.
     Collections.sort(latency);
     int count = latency.size();
     long sum = latency.stream().mapToLong(a -> a).sum();
+    System.out.printf("Latency graph: %s\n", new Gson().toJson(latency));
 
     System.err.println("\n======================================================================");
     System.err.println("Performance report: ");
     System.err.printf("Total number of transactions processed: %d\n", count);
     System.err.printf("Total elapsed time: %ds\n", totalTime);
-    System.err.printf("Transaction throughput: %d\n", count / totalTime);
+    System.err.printf("Transaction throughput: %d per second\n", count / totalTime);
     System.err.printf("Average transaction latency: %dms\n", toMs(sum / count));
     System.err.printf("Median transaction latency: %dms\n", toMs(getMedian(latency)));
     System.err.printf("95th percentile transaction latency: %dms\n", toMs(getPercentile(latency, 95)));
