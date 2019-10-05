@@ -33,7 +33,7 @@ public class TopBalanceTransaction extends BaseTransaction {
     private static final String SELECT_CUSTMER_ORDER_BY = "SELECT * FROM user_balance WHERE C_W_ID = %d ORDER BY C_BALANCE DESC LIMIT 10;";
     private static final String SELECT_CUSTOMER_INFO = "SELECT C_FIRST, C_LAST, C_MIDDLE FROM customer_r WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
     private static final String SELECT_WAREHOUSE_NAME = "SELECT W_NAME FROM warehouse WHERE W_ID=%d";
-    private static final String SELECT_DISTRICT_NAME = "SELECT D_NAME FROM district_r WHERE W_ID=%d AND D_ID=%d";
+    private static final String SELECT_DISTRICT_NAME = "SELECT D_NAME FROM district_r WHERE D_W_ID=%d AND D_ID=%d";
 
     public TopBalanceTransaction(final CqlSession session, final String[] parameters) {
         super(session, parameters);
