@@ -21,7 +21,7 @@ public class FinalStateTransaction extends BaseTransaction {
   @Override public void execute(final String[] dataLines) {
     System.out.println("\n======================================================================");
     Row row = executeQuery(QUERY_WAREHOUSE).get(0);
-    System.out.printf("Year-to-date total amount paid to warehouses: %d\n", row.getLong(0));
+    System.out.printf("Year-to-date total amount paid to warehouses: %d\n", row.getBigDecimal(0).doubleValue());
 
     row = executeQuery(QUERY_DISTRICT).get(0);
     double sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_D_YTD);
