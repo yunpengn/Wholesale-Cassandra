@@ -39,6 +39,15 @@ schedule_build() {
   done
 }
 
+schedule_kill() {
+  # Kills on each machine.
+  for ((c=0; c<5; c++)); do
+    machineID="xcnd$((25 + $c % 5))"
+    ssh $machineID "ps aux | grep -ie wholesale | grep -v grep | awk '{print $2}' | xargs kill -9"
+    echo "Have killed on machine ID=${machineID}."
+  done
+}
+
 # Schedules an experiment.
 if [[ "$1" == "build" ]]; then
   schedule_build
@@ -49,6 +58,8 @@ elif [[ "$1" == "run" ]]; then
   fi
   echo "Begins an experiment with size=$2."
   schedule_experiment $2
+elif [[ "$1" == "kill_all" ]]; then
+  schedule_kill
 else
     echo "Unknown command"
 fi
