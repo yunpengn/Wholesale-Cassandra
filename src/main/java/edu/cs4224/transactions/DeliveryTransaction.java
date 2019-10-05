@@ -40,7 +40,7 @@ public class DeliveryTransaction extends BaseTransaction {
     for (int i = 1; i <= NUM_DISTRICTS; i++) {
       // Finds the ID of the oldest yet-to-be-delivered order.
       String query = String.format(YET_DELIVERED_ORDER, warehouseID, i);
-      int orderID = executeQuery(query).get(0).getInt("d_next_delivery_o_id");
+      long orderID = executeQuery(query).get(0).getLong("d_next_delivery_o_id");
       System.out.printf("The oldest yet-to-be-delivered order in warehouse %d district %d is %d.\n",
           warehouseID, i, orderID);
 
