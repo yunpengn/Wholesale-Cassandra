@@ -58,14 +58,17 @@ public class DataLoader implements Closeable {
                     scalingCounter(data, 10, SCALE_D_YTD);
                     scalingCounter(data, 11, SCALE_D_NEXT_O_ID);
 
-                    wWriter.write(createCSVRow(data, 1, 2, 10, 11));
+                    List<String> appendedData = Arrays.asList(data);
+                    appendedData.add("0");
+
+                    wWriter.write(createCSVRow(appendedData.toArray(new String[appendedData.size()]), 1, 2, 10, 11, 12));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9));
                 });
 
         executeCQLCommand(
                 "USE wholesale",
-                "COPY district_w (D_W_ID, D_ID, D_YTD, D_NEXT_O_ID) FROM './data/temp/district_w.csv' WITH DELIMITER=','"
+                "COPY district_w (D_W_ID, D_ID, D_YTD, D_NEXT_O_ID, D_NEXT_DELIVERY_O_ID) FROM './data/temp/district_w.csv' WITH DELIMITER=','"
         );
         executeCQLCommand(
                 "USE wholesale",
