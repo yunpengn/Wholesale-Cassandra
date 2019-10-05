@@ -52,6 +52,7 @@ public class DeliveryTransaction extends BaseTransaction {
       query = String.format(GET_ORDER, warehouseID, i, orderID);
       Row yetDeliveredOrder = executeQuery(query).get(0);
       OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(yetDeliveredOrder.getString("o_l_info"));
+      System.out.println(yetDeliveredOrder.getString("o_l_info"));
 
       // Updates the carrier and delivery date.
       double totalAmount = 0;
