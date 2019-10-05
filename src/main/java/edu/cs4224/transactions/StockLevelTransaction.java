@@ -3,15 +3,21 @@ package edu.cs4224.transactions;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
+import edu.cs4224.OrderlineInfo;
+import edu.cs4224.OrderlineInfoMap;
+import edu.cs4224.ScalingParameters;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StockLevelTransaction extends BaseTransaction {
   private static final String GET_DISTRICT
-      = "SELECT * FROM district WHERE d_w_id = %d AND d_id = %d";
+      = "SELECT d_next_o_id FROM district_w WHERE d_w_id = %d AND d_id = %d";
   private static final String LAST_L_ORDERS
-      = "SELECT * FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id >= %d AND ol_o_id < %d";
+      = "SELECT o_l_info FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_id >= %d AND o_id < %d";
   private static final String STOCK_BELOW_THRESHOLD
-      = "SELECT * FROM stock WHERE s_w_id = %d AND s_i_id = %d";
+      = "SELECT s_quantity FROM stock_w WHERE s_w_id = %d AND s_i_id IN (%s)";
 
   private final int warehouseID;
   private final int districtID;
@@ -28,20 +34,36 @@ public class StockLevelTransaction extends BaseTransaction {
   }
 
   @Override public void execute(final String[] dataLines) {
+    // Gets next available orderID.
     String query = String.format(GET_DISTRICT, warehouseID, districtID);
     Row district = executeQuery(query).get(0);
     int nextAvailableOrderID = district.getInt("d_next_o_id");
 
+    // Gets the last L orders.
     query = String.format(LAST_L_ORDERS, warehouseID, districtID,
         nextAvailableOrderID - numOrders, nextAvailableOrderID);
-    List<Row> orderLine = executeQuery(query);
+    List<Row> orders = executeQuery(query);
 
+    // Gets the itemIDs in the last L orders.
+    Set<Integer> itemIDs = new HashSet<>();
+    for (Row order: orders) {
+      OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(order.getString("o_l_info"));
+      for (OrderlineInfo orderLine: orderLines.values()) {
+        itemIDs.add(orderLine.getI_ID());
+      }
+    }
+
+    // Gets the number of items below threshold.
+    StringBuilder builder = new StringBuilder();
+    for (int itemID: itemIDs) {
+      builder.append(itemID);
+      builder.append(", ");
+    }
+    String set = builder.length() > 0 ? builder.substring(0, builder.length() - 2) : builder.toString();
     int count = 0;
-    for (Row orderItem: orderLine) {
-      int itemID = orderItem.getInt("ol_i_id");
-      query = String.format(STOCK_BELOW_THRESHOLD, warehouseID, itemID);
-      Row stock = executeQuery(query).get(0);
-      if (stock.getBigDecimal("s_quantity").doubleValue() < threshold) {
+    query = String.format(STOCK_BELOW_THRESHOLD, warehouseID, set);
+    for (Row stock: executeQuery(query)) {
+      if (ScalingParameters.fromDB(stock.getLong("s_quantity"), ScalingParameters.SCALE_S_QUANTITY) < threshold) {
         count++;
       }
     }
