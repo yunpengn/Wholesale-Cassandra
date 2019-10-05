@@ -11,7 +11,7 @@ public class OrderStatusTransaction extends BaseTransaction {
   private static final String GET_CUSTOMER_R
       = "SELECT c_first, c_middle, c_last FROM customer_r WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String GET_CUSTOMER_BALANCE
-      = "SELECT * FROM customer_w WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+      = "SELECT c_balance FROM customer_w WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String CUSTOMER_LAST_ORDER
       = "SELECT o_id, o_entry_d, o_carrier_id, o_l_info FROM customer_order "
       + "WHERE o_w_id = %d AND o_d_id = %d AND o_c_id = %d "
@@ -39,7 +39,7 @@ public class OrderStatusTransaction extends BaseTransaction {
         customerR.getString("c_first"),
         customerR.getString("c_middle"),
         customerR.getString("c_last"),
-        ScalingParameters.fromDB(customerW.getLong("c_balance"), ScalingParameters.SCALE_C_BALANCE));
+        customerW.getBigDecimal("c_balance").doubleValue());
 
     // Gets the customer's last order information.
     query = String.format(CUSTOMER_LAST_ORDER, warehouseID, districtID, customerID);

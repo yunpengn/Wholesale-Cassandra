@@ -30,14 +30,14 @@ public class FinalStateTransaction extends BaseTransaction {
     System.out.printf("Sum of next orderIDs in all districts: %f\n", sum);
 
     row = executeQuery(QUERY_CUSTOMER).get(0);
-    sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_C_BALANCE);
+    sum = row.getBigDecimal(0).doubleValue();
     System.out.printf("Sum of balance of all customers: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_C_YTD_PAYMENT);
+    sum = row.getFloat(1);
     System.out.printf("Sum of year-to-date payment of all customers: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(2), ScalingParameters.SCALE_C_YTD_PAYMENT);
-    System.out.printf("Sum of payment counter of all customers: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_C_YTD_PAYMENT);
-    System.out.printf("Sum of delivery counter of all customers: %f\n", sum);
+    int paymentCounterSum = row.getInt(2);
+    System.out.printf("Sum of payment counter of all customers: %d\n", paymentCounterSum);
+    int deliveryCounterSum = row.getInt(3);
+    System.out.printf("Sum of delivery counter of all customers: %d\n", deliveryCounterSum);
 
     row = executeQuery(QUERY_ORDER).get(0);
     int orderIdSum = row.getInt(0);

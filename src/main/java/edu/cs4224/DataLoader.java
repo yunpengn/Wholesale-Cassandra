@@ -80,11 +80,6 @@ public class DataLoader implements Closeable {
     private void customer() throws Exception {
         filePartitioner("customer",
                 (wWriter, data) -> {
-                    scalingCounter(data, 17, SCALE_C_BALANCE);
-                    scalingCounter(data, 18, SCALE_C_YTD_PAYMENT);
-                    scalingCounter(data, 19, SCALE_C_PAYMENT_CNT);
-                    scalingCounter(data, 20, SCALE_C_DELIVERY_CNT);
-
                     wWriter.write(createCSVRow(data, 1, 2, 3, 17, 18, 19, 20));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21));
