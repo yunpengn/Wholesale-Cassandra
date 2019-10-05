@@ -32,6 +32,8 @@ public class RelatedCustomerTransaction extends BaseTransaction {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("1. C_W_ID: %d, C_D_ID: %d, C_ID: %d\n", C_W_ID, C_D_ID, C_ID));
 
+        List<String> result = new ArrayList<>();
+
         List<Row> orders = executeQuery(String.format(SELECT_ORDERS, C_W_ID, C_D_ID, C_ID));
         for (Row order: orders) {
             OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(order.getString("O_L_INFO"));
@@ -40,16 +42,14 @@ public class RelatedCustomerTransaction extends BaseTransaction {
             StringJoiner joiner = new StringJoiner(",");
             givenCustomerItems.forEach(itemID -> joiner.add(String.valueOf(itemID)));
 
-            List<String> result = new ArrayList<>();
             List<Row> itemsOrdersList = executeQuery(String.format(SELECT_ITEMS, joiner.toString()));
+            Set<String> checkSet = new HashSet<>();
 
             for (Row itemOrders: itemsOrdersList) {
                 Set<String> ordersSet = itemOrders.getSet("I_O_ID_LIST", String.class);
 
                 if (ordersSet == null)
                     continue;
-
-                Set<String> checkSet = new HashSet<>();
 
                 for (String orderInfo: ordersSet) {
                     String[] infos = orderInfo.split("-");
@@ -70,9 +70,9 @@ public class RelatedCustomerTransaction extends BaseTransaction {
                     }
                 }
             }
-
-            builder.append(result);
-            System.out.println(builder.toString());
         }
+
+        builder.append(result);
+        System.out.println(builder.toString());
     }
 }
