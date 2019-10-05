@@ -112,7 +112,7 @@ public class NewOrderTransaction extends BaseTransaction {
       System.out.println(new_order_query);
     executeQuery(new_order_query);
 
-    String update_query = "UPDATE item SET I_O_ID_LIST=I_O_ID_LIST+{%d-%d-%d} WHERE I_ID = %d";
+    String update_query = "UPDATE item SET I_O_ID_LIST=I_O_ID_LIST+{'%d-%d-%d'} WHERE I_ID = %d";
     for (int id : itemIds) {
         executeQuery(String.format(update_query, warehouseID, districtID, next_order_number, id));
     }

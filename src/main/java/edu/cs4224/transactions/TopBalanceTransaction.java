@@ -33,7 +33,7 @@ public class TopBalanceTransaction extends BaseTransaction {
     private static final String SELECT_CUSTMER_ORDER_BY = "SELECT * FROM user_balance WHERE C_W_ID = %d ORDER BY C_BALANCE DESC LIMIT 10;";
     private static final String SELECT_CUSTOMER_INFO = "SELECT C_FIRST, C_LAST, C_MIDDLE FROM customer_r WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
     private static final String SELECT_WAREHOUSE_NAME = "SELECT W_NAME FROM warehouse WHERE W_ID=%d";
-    private static final String SELECT_DISTRICT_NAME = "SELECT D_NAME FROM district_r WHERE W_ID=%d AND D_ID=%d";
+    private static final String SELECT_DISTRICT_NAME = "SELECT D_NAME FROM district_r WHERE D_W_ID=%d AND D_ID=%d";
 
     public TopBalanceTransaction(final CqlSession session, final String[] parameters) {
         super(session, parameters);
@@ -55,10 +55,10 @@ public class TopBalanceTransaction extends BaseTransaction {
 
         for (int i = 0; i < 10; i++) {
             Row customer_info = executeQuery(String.format(SELECT_CUSTOMER_INFO, infos.get(i).warehouse_id, infos.get(i).district_id, infos.get(i).customer_id)).get(0);
-            Row warehouse_info = executeQuery(String.format(SELECT_WAREHOUSE_NAME, infos.get(i).warehouse_id)).get(i);
+            Row warehouse_info = executeQuery(String.format(SELECT_WAREHOUSE_NAME, infos.get(i).warehouse_id)).get(0);
             Row district_info = executeQuery(String.format(SELECT_DISTRICT_NAME, infos.get(i).warehouse_id, infos.get(i).district_id)).get(0);
 
-            System.out.print(String.format("Customer #%d: Name(%s, %s, %s), Balance(%f), Warehouse(%s), District(%s)", i + 1, customer_info.getString("C_FIRST"),
+            System.out.println(String.format("Customer #%d: Name(%s, %s, %s), Balance(%f), Warehouse(%s), District(%s)", i + 1, customer_info.getString("C_FIRST"),
                     customer_info.getString("C_MIDDLE"), customer_info.getString("C_LAST"), infos.get(i).balance, warehouse_info.getString("W_NAME"), district_info.getString("D_NAME")));
         }
     }
