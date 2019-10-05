@@ -5,7 +5,7 @@ package edu.cs4224;
  */
 public class ScalingParameters {
   // District
-  public static final int SCALE_D_YTD = 10000;
+  public static final int SCALE_D_YTD = 100;
   public static final int SCALE_D_NEXT_O_ID = 1;
 
   // Customer
