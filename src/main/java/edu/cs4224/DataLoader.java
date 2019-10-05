@@ -58,10 +58,12 @@ public class DataLoader implements Closeable {
                     scalingCounter(data, 10, SCALE_D_YTD);
                     scalingCounter(data, 11, SCALE_D_NEXT_O_ID);
 
-                    List<String> appendedData = Arrays.asList(data);
-                    appendedData.add("0");
+                    String[] appendedData = new String[data.length + 1];
+                    for (int i = 0; i < data.length; i++)
+                        appendedData[i] = data[i];
+                    appendedData[data.length] = "0";
 
-                    wWriter.write(createCSVRow(appendedData.toArray(new String[appendedData.size()]), 1, 2, 10, 11, 12));
+                    wWriter.write(createCSVRow(appendedData, 1, 2, 10, 11, 12));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9));
                 });
