@@ -37,7 +37,7 @@ public class FinalStateTransaction extends BaseTransaction {
     int paymentCounterSum = row.getInt(2);
     System.out.printf("Sum of payment counter of all customers: %d\n", paymentCounterSum);
     int deliveryCounterSum = row.getInt(3);
-    System.out.printf("Sum of delivery counter of all customers: %f\n", deliveryCounterSum);
+    System.out.printf("Sum of delivery counter of all customers: %d\n", deliveryCounterSum);
 
     row = executeQuery(QUERY_ORDER).get(0);
     int orderIdSum = row.getInt(0);
