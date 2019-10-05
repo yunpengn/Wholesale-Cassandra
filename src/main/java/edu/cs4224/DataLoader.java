@@ -31,16 +31,16 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-//        warehouse();
-//        district();
-//        customer();
+        warehouse();
+        district();
+        customer();
 //        customer_balance();
 //        customer_balance_v2();
-//        item();
-//        order_line();
+        item();
+        order_line();
         customer_order();
-//        stock();
-//        appendNextDeliveryID();
+        stock();
+        appendNextDeliveryID();
     }
 
     private void warehouse() throws Exception {
@@ -58,14 +58,19 @@ public class DataLoader implements Closeable {
                     scalingCounter(data, 10, SCALE_D_YTD);
                     scalingCounter(data, 11, SCALE_D_NEXT_O_ID);
 
-                    wWriter.write(createCSVRow(data, 1, 2, 10, 11));
+                    String[] appendedData = new String[data.length + 1];
+                    for (int i = 0; i < data.length; i++)
+                        appendedData[i] = data[i];
+                    appendedData[data.length] = "0";
+
+                    wWriter.write(createCSVRow(appendedData, 1, 2, 10, 11, 12));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9));
                 });
 
         executeCQLCommand(
                 "USE wholesale",
-                "COPY district_w (D_W_ID, D_ID, D_YTD, D_NEXT_O_ID) FROM './data/temp/district_w.csv' WITH DELIMITER=','"
+                "COPY district_w (D_W_ID, D_ID, D_YTD, D_NEXT_O_ID, D_NEXT_DELIVERY_O_ID) FROM './data/temp/district_w.csv' WITH DELIMITER=','"
         );
         executeCQLCommand(
                 "USE wholesale",
@@ -180,13 +185,13 @@ public class DataLoader implements Closeable {
 
                 OrderlineInfoMap infoMap = new OrderlineInfoMap(rows);
 
-                writer.append(String.format("%s,%s\n", line, infoMap.toJson()));
+                writer.append(String.format("%s|%s\n", line.replace("null", "").replace(",", "|"), infoMap.toJson()));
             }
             writer.flush();
         }
         executeCQLCommand(
                 "USE wholesale",
-                "COPY customer_order (O_W_ID, O_D_ID, O_ID, O_C_ID, O_CARRIER_ID, O_OL_CNT, O_ALL_LOCAL, O_ENTRY_D, O_L_INFO) FROM './data/temp/order.csv'"
+                "COPY customer_order (O_W_ID, O_D_ID, O_ID, O_C_ID, O_CARRIER_ID, O_OL_CNT, O_ALL_LOCAL, O_ENTRY_D, O_L_INFO) FROM './data/temp/order.csv' WITH DELIMITER='|'"
         );
     }
 
@@ -217,7 +222,7 @@ public class DataLoader implements Closeable {
         for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
             int C_W_ID = entry.getKey();
             for (int C_D_ID : entry.getValue()) {
-                String query = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
+                String query = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_id";
                 List<Row> orders = session.execute(String.format(query, C_W_ID, C_D_ID)).all();
 
                 int min = Integer.MAX_VALUE;
@@ -227,8 +232,8 @@ public class DataLoader implements Closeable {
                     }
                 }
 
-                query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = %d";
-                session.execute(String.format(query, min));
+                query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = D_NEXT_DELIVERY_O_ID + %d WHERE D_W_ID = %d AND D_ID = %d";
+                session.execute(String.format(query, min, C_W_ID, C_D_ID));
             }
         }
     }
