@@ -60,7 +60,7 @@ public class NewOrderTransaction extends BaseTransaction {
 
     String get_next_order_number_query = String.format(CqlQueryList.DISTRICT_NEXT_O_ID, warehouseID, districtID);
     Row res = executeQuery(get_next_order_number_query).get(0);
-    int next_order_number = res.getInt("D_NEXT_O_ID");
+    long next_order_number = res.getLong("D_NEXT_O_ID");
 
     String get_district_tax_query = String.format(CqlQueryList.DISTRICT_INFO, warehouseID, districtID);
     res = executeQuery(get_district_tax_query).get(0);
