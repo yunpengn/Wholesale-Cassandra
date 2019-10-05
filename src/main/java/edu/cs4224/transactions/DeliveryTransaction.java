@@ -3,25 +3,27 @@ package edu.cs4224.transactions;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
-import java.util.List;
+import edu.cs4224.OrderlineInfo;
+import edu.cs4224.OrderlineInfoMap;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DeliveryTransaction extends BaseTransaction {
   private static final String YET_DELIVERED_ORDER
-      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
-  private static final String UPDATE_CARRIER
-      = "UPDATE customer_order SET o_carrier_id = %d WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
-  private static final String GET_ORDER_LINE_FROM_ORDER
-      = "SELECT ol_number FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
-  private static final String UPDATE_DELIVERY_DATE
-      = "UPDATE order_line SET ol_delivery_d = toTimestamp(now()) WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d "
-      + "AND ol_number IN (%s)";
-  private static final String ORDER_LINE_TOTAL_AMOUNT
-      = "SELECT SUM(ol_amount) FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
-  private static final String GET_CUSTOMER
-      = "SELECT c_balance, c_delivery_cnt FROM customer WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+      = "SELECT d_next_delivery_o_id FROM district_w WHERE d_w_id = %d AND d_id = %d";
+  private static final String UPDATE_YET_DELIVERED_ORDER
+      = "UPDATE district_w SET d_next_delivery_o_id = d_next_delivery_o_id + 1 WHERE d_w_id = %d AND d_id = %d";
+  private static final String GET_ORDER
+      = "SELECT o_l_info FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
+  private static final String UPDATE_CARRIER_DELIVERY
+      = "UPDATE customer_order SET o_carrier_id = %d, o_l_info = %s WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_CUSTOMER
-      = "UPDATE customer SET c_balance = %f, c_delivery_cnt = %d WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+      = "UPDATE customer_w SET c_balance = c_balance + %f, c_delivery_cnt = c_delivery_cnt + 1 "
+      + "WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final int NUM_DISTRICTS = 10;
+  private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
   private final int warehouseID;
   private final int carrierID;
@@ -35,55 +37,34 @@ public class DeliveryTransaction extends BaseTransaction {
 
   @Override public void execute(final String[] dataLines) {
     for (int i = 1; i <= NUM_DISTRICTS; i++) {
-      // Finds the oldest yet-to-be-delivered order.
+      // Finds the ID of the oldest yet-to-be-delivered order.
       String query = String.format(YET_DELIVERED_ORDER, warehouseID, i);
-      List<Row> orders = executeQuery(query);
-      Row yetDeliveredOrder = null;
-      for (Row order: orders) {
-        if (order.isNull("o_carrier_id")) {
-          yetDeliveredOrder = order;
-          break;
-        }
-      }
-      if (yetDeliveredOrder == null) {
-        System.out.printf("Cannot find any yet-to-be-delivered order in warehouse %d district %d.\n", warehouseID, i);
-        break;
-      }
-      int orderID = yetDeliveredOrder.getInt("o_id");
+      int orderID = executeQuery(query).get(0).getInt("d_next_delivery_o_id");
       System.out.printf("The oldest yet-to-be-delivered order in warehouse %d district %d is %d.\n",
           warehouseID, i, orderID);
 
-      // Updates the carrier.
-      query = String.format(UPDATE_CARRIER, carrierID, warehouseID, i, orderID);
+      // Updates the ID of the oldest yet-to-be-delivered order.
+      query = String.format(UPDATE_YET_DELIVERED_ORDER, warehouseID, 1);
       executeQuery(query);
 
-      // Updates the delivery date.
-      query = String.format(GET_ORDER_LINE_FROM_ORDER, warehouseID, i, orderID);
-      List<Row> orderLineNumbers = executeQuery(query);
-      StringBuilder builder = new StringBuilder();
-      for (int j = 0; j < orderLineNumbers.size(); j++) {
-        int orderLineID = orderLineNumbers.get(j).getInt("ol_number");
-        builder.append(orderLineID);
-        if (j != orderLineNumbers.size() - 1) {
-          builder.append(", ");
-        }
+      // Finds the corresponding order.
+      query = String.format(GET_ORDER, warehouseID, i, orderID);
+      Row yetDeliveredOrder = executeQuery(query).get(0);
+      OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(yetDeliveredOrder.getString("o_l_info"));
+
+      // Updates the carrier and delivery date.
+      double totalAmount = 0;
+      for (OrderlineInfo orderLine: orderLines.values()) {
+        totalAmount += orderLine.getAMOUNT();
+        orderLine.setDELIVERY_D(formatter.format(new Date()));
       }
-      query = String.format(UPDATE_DELIVERY_DATE, warehouseID, i, orderID, builder.toString());
-      System.out.printf("Going to update delivery date with query %s.\n", query);
+      query = String.format(UPDATE_CARRIER_DELIVERY, carrierID, orderLines.toJson(), warehouseID, i, orderID);
+      System.out.printf("Going to update order by query %s.\n", query);
       executeQuery(query);
-
-      // Gets the total amount.
-      query = String.format(ORDER_LINE_TOTAL_AMOUNT, warehouseID, i, orderID);
-      double totalAmount = executeQuery(query).get(0).getBigDecimal(0).doubleValue();
-      System.out.printf("The total amount for this order is %f.\n", totalAmount);
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
-      query = String.format(GET_CUSTOMER, warehouseID, i, customerID);
-      Row customer = executeQuery(query).get(0);
-      double newBalance = customer.getBigDecimal("c_balance").doubleValue() + totalAmount;
-      int newDeliveryCount = customer.getInt("c_delivery_cnt") + 1;
-      query = String.format(UPDATE_CUSTOMER, newBalance, newDeliveryCount, warehouseID, i, customerID);
+      query = String.format(UPDATE_CUSTOMER, totalAmount, warehouseID, i, customerID);
       System.out.printf("Going to update customer by query %s.\n", query);
       executeQuery(query);
     }
