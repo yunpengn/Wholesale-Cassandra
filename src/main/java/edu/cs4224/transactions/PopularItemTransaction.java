@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
+import edu.cs4224.ScalingParameters;
 
 import java.util.*;
 
@@ -35,11 +36,10 @@ public class PopularItemTransaction extends BaseTransaction {
         builder.append(String.format("1. W_ID: %d, D_ID: %d\n", W_ID, D_ID));
         builder.append(String.format("2. L: %d\n", L));
 
-        int N = executeQuery(String.format(DISTRICT_NEXT_O_ID, W_ID, D_ID))
-                .get(0).getInt("D_NEXT_O_ID");
+        long N = executeQuery(String.format(DISTRICT_NEXT_O_ID, W_ID, D_ID)).get(0).getLong("D_NEXT_O_ID");
 
         StringJoiner joiner = new StringJoiner(",");
-        for (int i = N - L; i < N; i++)
+        for (long i = N - L; i < N; i++)
             joiner.add(String.valueOf(i));
         List<Row> S = executeQuery(String.format(SELECT_ORDER, D_ID, W_ID, joiner.toString()));
 
