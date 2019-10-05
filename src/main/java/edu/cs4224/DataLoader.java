@@ -31,14 +31,14 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-//        warehouse();
-//        district();
-//        customer();
-//        item();
-//        order_line();
-//        customer_order();
-//        stock();
-//        appendNextDeliveryID();
+        warehouse();
+        district();
+        customer();
+        item();
+        order_line();
+        customer_order();
+        stock();
+        appendNextDeliveryID();
         addItemOrderList();
     }
 
@@ -321,7 +321,7 @@ public class DataLoader implements Closeable {
 
     @Override
     public void close() {
-        cleanup();
+//        cleanup();
         if (session != null)
             session.close();
     }
