@@ -1,11 +1,13 @@
 package edu.cs4224;
 
-import com.alibaba.fastjson.JSON;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
+import edu.cs4224.transactions.DeliveryTransaction;
 
 import java.io.*;
 import java.util.*;
+
 import static edu.cs4224.ScalingParameters.*;
 
 public class DataLoader implements Closeable {
@@ -14,7 +16,9 @@ public class DataLoader implements Closeable {
     private final Map<Integer, Set<Integer>> districtIDs;
 
     public DataLoader() {
-//        session = CqlSession.builder().build();
+        session = CqlSession.builder()
+                .withKeyspace(CqlIdentifier.fromCql("wholesale"))
+                .build();
         districtIDs = new HashMap<>();
 
         File file = new File("data/temp");
@@ -35,8 +39,9 @@ public class DataLoader implements Closeable {
 //        customer_balance_v2();
 //        item();
 //        order_line();
-//        customer_order(); TODO unfinished
+//        customer_order();
 //        stock();
+//        appendNextDeliveryID();
     }
 
     private void warehouse() throws Exception {
@@ -209,6 +214,25 @@ public class DataLoader implements Closeable {
         );
     }
 
+    private void appendNextDeliveryID() {
+        for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
+            int C_W_ID = entry.getKey();
+            for (int C_D_ID : entry.getValue()) {
+                List<Row> orders = session.execute(String.format(DeliveryTransaction.YET_DELIVERED_ORDER, C_W_ID, C_D_ID)).all();
+
+                int min = Integer.MAX_VALUE;
+                for (Row order : orders) {
+                    if (order.isNull("o_carrier_id")) {
+                        min = Math.min(min, order.getInt("O_ID"));
+                    }
+                }
+
+                String query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = %d";
+                session.execute(String.format(query, min));
+            }
+        }
+    }
+
     private void addDistrict(String D_W_ID, String D_ID) {
         int d_w_id = Integer.parseInt(D_W_ID);
         int d_id = Integer.parseInt(D_ID);
@@ -302,7 +326,7 @@ public class DataLoader implements Closeable {
 
         File[] files = folder.listFiles();
         if (files != null) {
-            for (File file: files) {
+            for (File file : files) {
                 file.delete();
             }
         }
