@@ -10,6 +10,7 @@ public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_DISTRICT = "SELECT SUM(d_ytd), SUM(d_next_o_id) FROM district_w";
   private static final String QUERY_CUSTOMER
       = "SELECT SUM(c_balance), SUM(c_ytd_payment), SUM(c_payment_cnt), SUM(c_delivery_cnt) from customer_w";
+  private static final String QUERY_ORDER = "";
 
   public FinalStateTransaction(final CqlSession session, final String[] parameters) {
     super(session, parameters);
@@ -28,7 +29,13 @@ public class FinalStateTransaction extends BaseTransaction {
 
     row = executeQuery(QUERY_CUSTOMER).get(0);
     sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_C_BALANCE);
-    System.out.printf("Sum of balanced of all customers: %f\n", sum);
+    System.out.printf("Sum of balance of all customers: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_C_YTD_PAYMENT);
+    System.out.printf("Sum of year-to-date payment of all customers: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(2), ScalingParameters.SCALE_C_YTD_PAYMENT);
+    System.out.printf("Sum of payment counter of all customers: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_C_YTD_PAYMENT);
+    System.out.printf("Sum of delivery counter of all customers: %f\n", sum);
 
     System.out.println("\n======================================================================");
   }
