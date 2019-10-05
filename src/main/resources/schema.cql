@@ -67,10 +67,10 @@ CREATE TABLE customer_w (
 	// C_CREDIT text,
 	// C_CREDIT_LIM decimal,
 	// C_DISCOUNT decimal,
-	C_BALANCE counter,
-	C_YTD_PAYMENT counter,
-	C_PAYMENT_CNT counter,
-	C_DELIVERY_CNT counter,
+	C_BALANCE decimal,
+	C_YTD_PAYMENT float,
+	C_PAYMENT_CNT int,
+	C_DELIVERY_CNT int,
 	// C_DATA text,
 	PRIMARY KEY ((C_W_ID, C_D_ID), C_ID)
 );
