@@ -156,7 +156,7 @@ public class DataLoader implements Closeable {
         ) {
             String row;
             while ((row = reader.readLine()) != null) {
-                writer.write(row.replaceAll("null", ""));
+                writer.write(row.replaceAll("null", "") + "\n");
             }
             writer.flush();
         }
