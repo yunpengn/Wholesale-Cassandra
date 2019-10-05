@@ -5,6 +5,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 
 import edu.cs4224.transactions.BaseTransaction;
 import edu.cs4224.transactions.DeliveryTransaction;
+import edu.cs4224.transactions.FinalStateTransaction;
 import edu.cs4224.transactions.NewOrderTransaction;
 import edu.cs4224.transactions.OrderStatusTransaction;
 import edu.cs4224.transactions.PaymentTransaction;
@@ -106,13 +107,17 @@ public class Main {
     }
     end = System.nanoTime();
 
-    // Closes the opened resources.
-    session.close();
-    scanner.close();
-
     // Generates the performance report.
     elapsedTime = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);
     generatePerformanceReport(latency, elapsedTime);
+
+    // Generates the final state report.
+    BaseTransaction transaction = new FinalStateTransaction(session, new String[0]);
+    transaction.execute(new String[0]);
+
+    // Closes the opened resources.
+    session.close();
+    scanner.close();
   }
 
   private static void generatePerformanceReport(List<Long> latency, long totalTime) {
@@ -125,6 +130,7 @@ public class Main {
     System.err.println("Performance report: ");
     System.err.printf("Total number of transactions processed: %d\n", count);
     System.err.printf("Total elapsed time: %ds\n", totalTime);
+    System.err.printf("Transaction throughput: %d\n", count / totalTime);
     System.err.printf("Average transaction latency: %dms\n", toMs(sum / count));
     System.err.printf("Median transaction latency: %dms\n", toMs(getMedian(latency)));
     System.err.printf("95th percentile transaction latency: %dms\n", toMs(getPercentile(latency, 95)));
