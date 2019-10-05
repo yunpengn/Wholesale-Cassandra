@@ -17,9 +17,9 @@ public class DeliveryTransaction extends BaseTransaction {
   private static final String UPDATE_YET_DELIVERED_ORDER
       = "UPDATE district_w SET d_next_delivery_o_id = d_next_delivery_o_id + 1 WHERE d_w_id = %d AND d_id = %d";
   private static final String GET_ORDER
-      = "SELECT o_l_info FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
+      = "SELECT o_l_info, o_c_id FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_CARRIER_DELIVERY
-      = "UPDATE customer_order SET o_carrier_id = %d, o_l_info = %s WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
+      = "UPDATE customer_order SET o_carrier_id = %d, o_l_info = '%s' WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_CUSTOMER
       = "UPDATE customer_w SET c_balance = c_balance + %s, c_delivery_cnt = c_delivery_cnt + 1 "
       + "WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
@@ -52,7 +52,6 @@ public class DeliveryTransaction extends BaseTransaction {
       query = String.format(GET_ORDER, warehouseID, i, orderID);
       Row yetDeliveredOrder = executeQuery(query).get(0);
       OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(yetDeliveredOrder.getString("o_l_info"));
-      System.out.println(yetDeliveredOrder.getString("o_l_info"));
 
       // Updates the carrier and delivery date.
       double totalAmount = 0;

@@ -37,7 +37,7 @@ public class StockLevelTransaction extends BaseTransaction {
     // Gets next available orderID.
     String query = String.format(GET_DISTRICT, warehouseID, districtID);
     Row district = executeQuery(query).get(0);
-    int nextAvailableOrderID = district.getInt("d_next_o_id");
+    long nextAvailableOrderID = district.getLong("d_next_o_id");
 
     // Gets the last L orders.
     query = String.format(LAST_L_ORDERS, warehouseID, districtID,
