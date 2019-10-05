@@ -55,11 +55,11 @@ public class OrderStatusTransaction extends BaseTransaction {
     for (OrderlineInfo orderLine: orderLines.values()) {
       System.out.printf("Order line in last order item ID: %d, supply warehouse ID: %d, "
               + "quantity: %f, price: %f, delivery date: %s\n",
-          orderLine.getI_ID(),
-          orderLine.getSUPPLY_W_ID(),
-          orderLine.getQUANTITY(),
-          orderLine.getAMOUNT(),
-          orderLine.getDELIVERY_D());
+          orderLine.getId(),
+          orderLine.getSupply(),
+          orderLine.getQuantity(),
+          orderLine.getAmount(),
+          orderLine.getDelivery());
     }
   }
 }

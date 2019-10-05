@@ -49,7 +49,7 @@ public class StockLevelTransaction extends BaseTransaction {
     for (Row order: orders) {
       OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(order.getString("o_l_info"));
       for (OrderlineInfo orderLine: orderLines.values()) {
-        itemIDs.add(orderLine.getI_ID());
+        itemIDs.add(orderLine.getId());
       }
     }
 

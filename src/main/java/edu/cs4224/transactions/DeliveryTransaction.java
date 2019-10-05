@@ -57,8 +57,8 @@ public class DeliveryTransaction extends BaseTransaction {
       // Updates the carrier and delivery date.
       double totalAmount = 0;
       for (OrderlineInfo orderLine: orderLines.values()) {
-        totalAmount += orderLine.getAMOUNT();
-        orderLine.setDELIVERY_D(formatter.format(new Date()));
+        totalAmount += orderLine.getAmount();
+        orderLine.setDelivery(formatter.format(new Date()));
       }
       query = String.format(UPDATE_CARRIER_DELIVERY, carrierID, orderLines.toJson(), warehouseID, i, orderID);
       System.out.printf("Going to update order by query %s.\n", query);
