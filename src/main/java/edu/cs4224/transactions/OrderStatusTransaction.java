@@ -15,7 +15,7 @@ public class OrderStatusTransaction extends BaseTransaction {
   private static final String CUSTOMER_LAST_ORDER
       = "SELECT o_id, o_entry_d, o_carrier_id, o_l_info FROM customer_order "
       + "WHERE o_w_id = %d AND o_d_id = %d AND o_c_id = %d "
-      + "ORDER BY o_d_id DESC, o_id DESC LIMIT 1 ALLOW FILTERING";
+      + "ORDER BY o_id DESC LIMIT 1 ALLOW FILTERING";
 
   private final int warehouseID;
   private final int districtID;
