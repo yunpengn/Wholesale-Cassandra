@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Schedules a job on a certain machine.
+schedule_job() {
+  jobID=$1
+  echo "Begins to schedule job with job ID=${jobID}:"
+
+  machineID="xcnd$((25 + $jobID % 5))"
+  echo "The job will be scheduled on machine IP=${machineID}."
+
+  input_file="data/xact-files/${jobID}.txt"
+  stdout_file="log/${jobID}.out.log"
+  stderr_file="log/${jobID}.err.log"
+  ssh $machineID 'cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar ${input_file} > ${stdout_file} 2> ${stderr_file} &'
+  echo "Have runned job ID=${jobID} with input from ${input_file}."
+}
+
+# Schedules an experiment by running a certain number of jobs.
+schedule_experiment() {
+  # Builds on each machine.
+  for ((c=0; c<5; c++)); do
+    machineID="xcnd$((25 + $jobID % 5))"
+    ssh $machineID 'cd /temp/cs4224f/Wholesale-Cassandra && ./gradlew shadowJar'
+    echo "Have built on machine ID=${machineID}."
+  done
+
+  # Schedules job one-by-one.
+  for ((c=0; c<$1; c++)); do
+    schedule_job $c
+  done
+}
+
+# Schedules an experiment.
+schedule_experiment $1
