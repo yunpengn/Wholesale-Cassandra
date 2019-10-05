@@ -20,8 +20,8 @@ public class ScalingParameters {
   public static final int SCALE_S_ORDER_CNT = 1;
   public static final int SCALE_S_REMOTE_CNT = 1;
 
-  public static double fromDB(final String input, final int scalingParam) {
-    return Double.parseDouble(input) / scalingParam;
+  public static double fromDB(final long input, final int scalingParam) {
+    return 1.0 * input / scalingParam;
   }
 
   public static String toDB(final double input, final int scalingParam) {

@@ -3,16 +3,19 @@ package edu.cs4224.transactions;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
-import java.util.List;
+import edu.cs4224.OrderlineInfo;
+import edu.cs4224.OrderlineInfoMap;
+import edu.cs4224.ScalingParameters;
 
 public class OrderStatusTransaction extends BaseTransaction {
-  private static final String GET_CUSTOMER
-      = "SELECT * FROM customer WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+  private static final String GET_CUSTOMER_R
+      = "SELECT c_first, c_middle, c_last FROM customer_r WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
+  private static final String GET_CUSTOMER_BALANCE
+      = "SELECT * FROM customer_w WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String CUSTOMER_LAST_ORDER
-      = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_c_id = %d "
+      = "SELECT o_id, o_entry_d, o_carrier_id, o_l_info FROM customer_order "
+      + "WHERE o_w_id = %d AND o_d_id = %d AND o_c_id = %d "
       + "ORDER BY o_d_id DESC, o_id DESC LIMIT 1 ALLOW FILTERING";
-  private static final String CUSTOMER_LAST_ORDER_LINE
-      = "SELECT * FROM order_line WHERE ol_w_id = %d AND ol_d_id = %d AND ol_o_id = %d";
 
   private final int warehouseID;
   private final int districtID;
@@ -27,14 +30,18 @@ public class OrderStatusTransaction extends BaseTransaction {
   }
 
   @Override public void execute(final String[] dataLines) {
-    String query = String.format(GET_CUSTOMER, warehouseID, districtID, customerID);
-    Row customer = executeQuery(query).get(0);
+    // Gets the customer's information.
+    String query = String.format(GET_CUSTOMER_R, warehouseID, districtID, customerID);
+    Row customerR = executeQuery(query).get(0);
+    query = String.format(GET_CUSTOMER_BALANCE, warehouseID, districtID, customerID);
+    Row customerW = executeQuery(query).get(0);
     System.out.printf("Customer name: %s %s %s, balance: %f\n",
-        customer.getString("c_first"),
-        customer.getString("c_middle"),
-        customer.getString("c_last"),
-        customer.getBigDecimal("c_balance").doubleValue());
+        customerR.getString("c_first"),
+        customerR.getString("c_middle"),
+        customerR.getString("c_last"),
+        ScalingParameters.fromDB(customerW.getLong("c_balance"), ScalingParameters.SCALE_C_BALANCE));
 
+    // Gets the customer's last order information.
     query = String.format(CUSTOMER_LAST_ORDER, warehouseID, districtID, customerID);
     Row lastOrder = executeQuery(query).get(0);
     int lastOrderID = lastOrder.getInt("o_id");
@@ -43,19 +50,16 @@ public class OrderStatusTransaction extends BaseTransaction {
         lastOrder.getInstant("o_entry_d").toString(),
         lastOrder.getInt("o_carrier_id"));
 
-    query = String.format(CUSTOMER_LAST_ORDER_LINE, warehouseID, districtID, lastOrderID);
-    List<Row> orderLines = executeQuery(query);
-    for (Row orderLine: orderLines) {
-      String deliveryDate = orderLine.isNull("ol_delivery_d")
-          ? "Unknown" : orderLine.getInstant("ol_delivery_d").toString();
-
+    // Retrieves each orderLine from JSON content.
+    OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(lastOrder.getString("o_l_info"));
+    for (OrderlineInfo orderLine: orderLines.values()) {
       System.out.printf("Order line in last order item ID: %d, supply warehouse ID: %d, "
               + "quantity: %f, price: %f, delivery date: %s\n",
-          orderLine.getInt("ol_i_id"),
-          orderLine.getInt("ol_supply_w_id"),
-          orderLine.getBigDecimal("ol_quantity").doubleValue(),
-          orderLine.getBigDecimal("ol_amount").doubleValue(),
-          deliveryDate);
+          orderLine.getI_ID(),
+          orderLine.getSUPPLY_W_ID(),
+          orderLine.getQUANTITY(),
+          orderLine.getAMOUNT(),
+          orderLine.getDELIVERY_D());
     }
   }
 }

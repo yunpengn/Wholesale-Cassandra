@@ -5,6 +5,7 @@ import com.datastax.oss.driver.api.core.cql.Row;
 
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
+import edu.cs4224.ScalingParameters;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,7 @@ public class DeliveryTransaction extends BaseTransaction {
   private static final String UPDATE_CARRIER_DELIVERY
       = "UPDATE customer_order SET o_carrier_id = %d, o_l_info = %s WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_CUSTOMER
-      = "UPDATE customer_w SET c_balance = c_balance + %f, c_delivery_cnt = c_delivery_cnt + 1 "
+      = "UPDATE customer_w SET c_balance = c_balance + %s, c_delivery_cnt = c_delivery_cnt + 1 "
       + "WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final int NUM_DISTRICTS = 10;
   private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -64,7 +65,8 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Updates the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
-      query = String.format(UPDATE_CUSTOMER, totalAmount, warehouseID, i, customerID);
+      String amountDiff = ScalingParameters.toDB(totalAmount, ScalingParameters.SCALE_C_BALANCE);
+      query = String.format(UPDATE_CUSTOMER, amountDiff, warehouseID, i, customerID);
       System.out.printf("Going to update customer by query %s.\n", query);
       executeQuery(query);
     }
