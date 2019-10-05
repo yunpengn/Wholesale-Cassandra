@@ -40,9 +40,9 @@ public class FinalStateTransaction extends BaseTransaction {
     System.out.printf("Sum of delivery counter of all customers: %f\n", sum);
 
     row = executeQuery(QUERY_ORDER).get(0);
-    long orderIdSum = row.getLong(0);
+    int orderIdSum = row.getInt(0);
     System.out.printf("Sum of orderIDs of all orders: %d\n", orderIdSum);
-    long orderLineCountSum = row.getLong(1);
+    int orderLineCountSum = row.getInt(1);
     System.out.printf("Sum of orderLine count of all orders: %d\n", orderLineCountSum);
 
     row = executeQuery(QUERY_STOCK).get(0);
