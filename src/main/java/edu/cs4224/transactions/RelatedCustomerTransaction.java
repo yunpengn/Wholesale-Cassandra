@@ -49,7 +49,7 @@ public class RelatedCustomerTransaction extends BaseTransaction {
                 if (ordersSet == null)
                     continue;
 
-                BitSet bitSet = new BitSet(ordersSet.size());
+                Set<String> checkSet = new HashSet<>();
 
                 for (String orderInfo: ordersSet) {
                     String[] infos = orderInfo.split("-");
@@ -58,15 +58,15 @@ public class RelatedCustomerTransaction extends BaseTransaction {
                     int orderID = Integer.parseInt(infos[2]);
                     String customerID = infos[3];
 
-                    int orderKey = orderID << (4 + 7) + districtID << 4 + warehoseID;
+                    String key = String.format("%s%s%s", warehoseID, districtID, orderID);
 
                     if (warehoseID == C_W_ID)
                         continue;
 
-                    if (bitSet.get(orderKey)) {
+                    if (checkSet.contains(key)) {
                         result.add(customerID);
                     } else {
-                        bitSet.set(orderKey);
+                        checkSet.add(key);
                     }
                 }
             }
