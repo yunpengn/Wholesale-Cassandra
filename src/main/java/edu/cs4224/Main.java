@@ -2,6 +2,7 @@ package edu.cs4224;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.google.gson.Gson;
 
 import edu.cs4224.transactions.BaseTransaction;
 import edu.cs4224.transactions.DeliveryTransaction;
@@ -125,12 +126,13 @@ public class Main {
     Collections.sort(latency);
     int count = latency.size();
     long sum = latency.stream().mapToLong(a -> a).sum();
+    System.out.printf("Latency graph: %s\n", new Gson().toJson(latency));
 
     System.err.println("\n======================================================================");
     System.err.println("Performance report: ");
     System.err.printf("Total number of transactions processed: %d\n", count);
     System.err.printf("Total elapsed time: %ds\n", totalTime);
-    System.err.printf("Transaction throughput: %d\n", count / totalTime);
+    System.err.printf("Transaction throughput: %d per second\n", count / totalTime);
     System.err.printf("Average transaction latency: %dms\n", toMs(sum / count));
     System.err.printf("Median transaction latency: %dms\n", toMs(getMedian(latency)));
     System.err.printf("95th percentile transaction latency: %dms\n", toMs(getPercentile(latency, 95)));
