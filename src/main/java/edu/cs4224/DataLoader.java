@@ -37,7 +37,7 @@ public class DataLoader implements Closeable {
 //        customer_balance();
 //        customer_balance_v2();
 //        item();
-        order_line();
+//        order_line();
         customer_order();
 //        stock();
 //        appendNextDeliveryID();

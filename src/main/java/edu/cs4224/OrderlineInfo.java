@@ -27,7 +27,7 @@ public class OrderlineInfo {
 
     public OrderlineInfo(Row row) {
         I_ID = row.getInt("OL_I_ID");
-        DELIVERY_D = row.getInstant("OL_DELIVERY_D").toString();
+        DELIVERY_D = row.getInstant("OL_DELIVERY_D") != null ? row.getInstant("OL_DELIVERY_D").toString() : "";
         AMOUNT = row.getBigDecimal("OL_AMOUNT").doubleValue();
         SUPPLY_W_ID = row.getInt("OL_SUPPLY_W_ID");
         QUANTITY = row.getBigDecimal("OL_QUANTITY").doubleValue();
