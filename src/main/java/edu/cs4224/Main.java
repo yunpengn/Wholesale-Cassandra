@@ -140,7 +140,6 @@ public class Main {
     Collections.sort(latency);
     int count = latency.size();
     long sum = latency.stream().mapToLong(a -> a).sum();
-    System.err.printf("Latency graph: %s\n", new Gson().toJson(latency));
 
     System.err.println("\n======================================================================");
     System.err.println("Performance report: ");
