@@ -122,6 +122,9 @@ public class Main {
   }
 
   private static void generatePerformanceReport(List<Long> latency, long totalTime) {
+    // Some magic.
+    totalTime = Math.max(totalTime, 1);
+
     // Performs some mathematics here.
     Collections.sort(latency);
     int count = latency.size();
