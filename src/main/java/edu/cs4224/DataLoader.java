@@ -218,7 +218,8 @@ public class DataLoader implements Closeable {
         for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
             int C_W_ID = entry.getKey();
             for (int C_D_ID : entry.getValue()) {
-                List<Row> orders = session.execute(String.format(DeliveryTransaction.YET_DELIVERED_ORDER, C_W_ID, C_D_ID)).all();
+                String query = "SELECT * FROM customer_order WHERE o_w_id = %d AND o_d_id = %d ORDER BY o_d_id, o_id";
+                List<Row> orders = session.execute(String.format(query, C_W_ID, C_D_ID)).all();
 
                 int min = Integer.MAX_VALUE;
                 for (Row order : orders) {
@@ -227,7 +228,7 @@ public class DataLoader implements Closeable {
                     }
                 }
 
-                String query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = %d";
+                query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = %d";
                 session.execute(String.format(query, min));
             }
         }
