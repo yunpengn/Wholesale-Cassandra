@@ -32,8 +32,6 @@ public class RelatedCustomerTransaction extends BaseTransaction {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("1. C_W_ID: %d, C_D_ID: %d, C_ID: %d\n", C_W_ID, C_D_ID, C_ID));
 
-        List<String> result = new ArrayList<>();
-
         List<Row> orders = executeQuery(String.format(SELECT_ORDERS, C_W_ID, C_D_ID, C_ID));
         for (Row order: orders) {
             OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(order.getString("O_L_INFO"));
@@ -64,7 +62,7 @@ public class RelatedCustomerTransaction extends BaseTransaction {
                         continue;
 
                     if (checkSet.contains(key)) {
-                        result.add(customerID);
+                        builder.append(String.format("warehoseID: %d, districtID: %d, customerID: %s\n", warehoseID, districtID, customerID));
                     } else {
                         checkSet.add(key);
                     }
@@ -72,7 +70,6 @@ public class RelatedCustomerTransaction extends BaseTransaction {
             }
         }
 
-        builder.append(result);
         System.out.println(builder.toString());
     }
 }
