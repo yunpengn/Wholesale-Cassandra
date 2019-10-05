@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static edu.cs4224.CqlQueryList.DISTRICT_INFO;
+import static edu.cs4224.CqlQueryList.*;
 
 public class PopularItemTransaction extends BaseTransaction {
 
@@ -38,7 +38,7 @@ public class PopularItemTransaction extends BaseTransaction {
         builder.append(String.format("1. W_ID: %d, D_ID: %d\n", W_ID, D_ID));
         builder.append(String.format("2. L: %d\n", L));
 
-        int N = executeQuery(String.format(DISTRICT_INFO, W_ID, D_ID))
+        int N = executeQuery(String.format(DISTRICT_NEXT_O_ID, W_ID, D_ID))
                 .get(0).getInt("D_NEXT_O_ID");
 
         List<Row> S = new ArrayList<>(L);

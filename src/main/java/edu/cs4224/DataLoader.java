@@ -173,20 +173,20 @@ public class DataLoader implements Closeable {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] rowData = line.split(",");
+                String[] rowData = Arrays.asList(line.split(",");
 
                 String query = "SELECT OL_NUMBER, OL_I_ID, OL_DELIVERY_D, OL_AMOUNT, OL_SUPPLY_W_ID, OL_QUANTITY FROM wholesale.order_line WHERE OL_W_ID = %s AND OL_D_ID = %s AND OL_O_ID = %s";
                 List<Row> rows = session.execute(String.format(query, rowData[0], rowData[1], rowData[2])).all();
 
                 OrderlineInfoMap infoMap = new OrderlineInfoMap(rows);
 
-                writer.append(String.format("%s,%s\n", line, infoMap.toJson()));
+                writer.append(String.format("%s|%s\n", line.replace(",", "|"), infoMap.toJson()));
             }
             writer.flush();
         }
         executeCQLCommand(
                 "USE wholesale",
-                "COPY customer_order (O_W_ID, O_D_ID, O_ID, O_C_ID, O_CARRIER_ID, O_OL_CNT, O_ALL_LOCAL, O_ENTRY_D, O_L_INFO) FROM './data/temp/order.csv'"
+                "COPY customer_order (O_W_ID, O_D_ID, O_ID, O_C_ID, O_CARRIER_ID, O_OL_CNT, O_ALL_LOCAL, O_ENTRY_D, O_L_INFO) FROM './data/temp/order.csv' WITH DELIMITER='|'"
         );
     }
 
