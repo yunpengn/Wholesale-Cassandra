@@ -31,14 +31,14 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-//        warehouse();
-//        district();
-//        customer();
-//        item();
-//        order_line();
-//        customer_order();
-//        stock();
-//        appendNextDeliveryID();
+        warehouse();
+        district();
+        customer();
+        item();
+        order_line();
+        customer_order();
+        stock();
+        appendNextDeliveryID();
         addItemOrderList();
     }
 
@@ -194,7 +194,7 @@ public class DataLoader implements Closeable {
             Map<Integer, Set<String>> toOrderList = new HashMap<>();
 
             while ((row = reader.readLine()) != null) {
-                String[] parts = row.split("|");
+                String[] parts = row.split("\\|");
                 String warehouseID = parts[0];
                 String districtID = parts[1];
                 String orderID = parts[2];
@@ -321,7 +321,7 @@ public class DataLoader implements Closeable {
 
     @Override
     public void close() {
-        cleanup();
+//        cleanup();
         if (session != null)
             session.close();
     }
