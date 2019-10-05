@@ -20,7 +20,6 @@ public class TopBalanceTransaction extends BaseTransaction {
 
     @Override
     public void execute(final String[] dataLines) {
-        // TODO need to add C_BALANCE into clustering key
         // find top 10 customers with maximum balance
 
 //        List<Row> rows = executeQuery(SELECT_CUSTMER_ORDER_BY);
@@ -44,7 +43,5 @@ public class TopBalanceTransaction extends BaseTransaction {
 //        }
 
 
-        // Way 2:
-        // save the whole customer table in memory and sort in memory
     }
 }
