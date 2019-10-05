@@ -11,33 +11,41 @@ public class OrderlineInfo {
     // OL_SUPPLY_W_ID int,
     // OL_QUANTITY decimal,
 
-    private String I_ID;
-    private Date DELIVERY_D;
+    private int I_ID;
+    private String DELIVERY_D;
     private double AMOUNT;
     private int SUPPLY_W_ID;
     private double QUANTITY;
 
+    public OrderlineInfo(int I_ID, String DELIVERY_D, double AMOUNT, int SUPPLY_W_ID, double QUANTITY) {
+        this.I_ID = I_ID;
+        this.DELIVERY_D = DELIVERY_D;
+        this.AMOUNT = AMOUNT;
+        this.SUPPLY_W_ID = SUPPLY_W_ID;
+        this.QUANTITY = QUANTITY;
+    }
+
     public OrderlineInfo(Row row) {
-        I_ID = row.getString("OL_I_ID");
-        DELIVERY_D = Date.from(row.getInstant("OL_DELIVERY_D"));
+        I_ID = row.getInt("OL_I_ID");
+        DELIVERY_D = row.getInstant("OL_DELIVERY_D").toString();
         AMOUNT = row.getBigDecimal("OL_AMOUNT").doubleValue();
         SUPPLY_W_ID = row.getInt("OL_SUPPLY_W_ID");
         QUANTITY = row.getBigDecimal("OL_QUANTITY").doubleValue();
     }
 
-    public String getI_ID() {
+    public int getI_ID() {
         return I_ID;
     }
 
-    public void setI_ID(String i_ID) {
+    public void setI_ID(int i_ID) {
         I_ID = i_ID;
     }
 
-    public Date getDELIVERY_D() {
+    public String getDELIVERY_D() {
         return DELIVERY_D;
     }
 
-    public void setDELIVERY_D(Date DELIVERY_D) {
+    public void setDELIVERY_D(String DELIVERY_D) {
         this.DELIVERY_D = DELIVERY_D;
     }
 

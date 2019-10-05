@@ -4,6 +4,8 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
 import edu.cs4224.CqlQueryList;
+import edu.cs4224.OrderlineInfo;
+import edu.cs4224.OrderlineInfoMap;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -75,10 +77,7 @@ public class NewOrderTransaction extends BaseTransaction {
 
     Date cur = new Date();
     String order_time = formatter.format(cur);
-
-    String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
-            warehouseID, customerID, order_time, numDataLines, isAllLocal, "{}");
-    executeQuery(new_order_query);
+    OrderlineInfoMap info_map = new OrderlineInfoMap();
 
     double totalAmount = 0;
     for (int i = 0; i < numDataLines; i++) {
@@ -102,10 +101,15 @@ public class NewOrderTransaction extends BaseTransaction {
         itemsAmount.add(itemAmount);
         itemsName.add(item_name);
         totalAmount += itemAmount;
-        String create_order_line_query = String.format(CqlQueryList.CREATE_ORDER_LINE, next_order_number,
-                districtID, warehouseID, i + 1, itemIds.get(i), supplierWareHouse.get(i), quantity.get(i),itemAmount, "S_DIST_" + districtID);
-        executeQuery(create_order_line_query);
+
+        OrderlineInfo info = new OrderlineInfo(itemIds.get(i), "", itemAmount, supplierWareHouse.get(i), quantity.get(i));
+        info_map.put(i+1, info);
     }
+
+    String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
+              warehouseID, customerID, order_time, numDataLines, isAllLocal, info_map.toJson());
+    executeQuery(new_order_query);
+
     String check_warehouse_tax_query = String.format(CqlQueryList.CHECK_WAREHOUSE_TAX, warehouseID);
     double warehouse_tax = executeQuery(check_warehouse_tax_query).get(0).getBigDecimal("W_TAX").doubleValue();
 
