@@ -31,14 +31,14 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-        warehouse();
-        district();
-        customer();
-        item();
-        order_line();
-        customer_order();
-        stock();
-        appendNextDeliveryID();
+//        warehouse();
+//        district();
+//        customer();
+//        item();
+//        order_line();
+//        customer_order();
+//        stock();
+//        appendNextDeliveryID();
         addItemOrderList();
     }
 
@@ -200,6 +200,8 @@ public class DataLoader implements Closeable {
                 String orderID = parts[2];
                 String customerID = parts[3];
                 String infoStr = String.format("'%s-%s-%s-%s'", warehouseID, districtID, orderID, customerID);
+
+                System.out.println(parts[8]);
 
                 OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(parts[8]);
                 infoMap.values().stream().map(OrderlineInfo::getId).forEach(itemID -> {
