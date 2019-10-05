@@ -109,6 +109,7 @@ public class NewOrderTransaction extends BaseTransaction {
 
     String new_order_query = String.format(CqlQueryList.CREATE_NEW_ORDER, next_order_number, districtID,
               warehouseID, customerID, order_time, numDataLines, isAllLocal, info_map.toJson());
+      System.out.println(new_order_query);
     executeQuery(new_order_query);
 
     String check_warehouse_tax_query = String.format(CqlQueryList.CHECK_WAREHOUSE_TAX, warehouseID);
