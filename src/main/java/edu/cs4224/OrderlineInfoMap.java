@@ -23,6 +23,6 @@ public class OrderlineInfoMap extends HashMap<Integer, OrderlineInfo> {
     }
 
     public static OrderlineInfoMap fromJson(String json) {
-        return (OrderlineInfoMap) JSON.parseObject(json, new TypeReference<HashMap<Integer, OrderlineInfo>>() {});
+        return JSON.parseObject(json, new TypeReference<OrderlineInfoMap>() {});
     }
 }
