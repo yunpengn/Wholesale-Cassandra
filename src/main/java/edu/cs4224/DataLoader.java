@@ -180,7 +180,7 @@ public class DataLoader implements Closeable {
 
                 OrderlineInfoMap infoMap = new OrderlineInfoMap(rows);
 
-                writer.append(String.format("%s|%s\n", line.replace(",", "|"), infoMap.toJson()));
+                writer.append(String.format("%s|%s\n", line.replace("null", "").replace(",", "|"), infoMap.toJson()));
             }
             writer.flush();
         }
