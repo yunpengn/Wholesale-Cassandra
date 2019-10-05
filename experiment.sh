@@ -11,7 +11,7 @@ schedule_job() {
   input_file="data/xact-files/$((jobID + 1)).txt"
   stdout_file="log/$((jobID + 1)).out.log"
   stderr_file="log/$((jobID + 1)).err.log"
-  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar < ${input_file} > ${stdout_file} 2> ${stderr_file} &" > /dev/null &
+  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar < ${input_file} > ${stdout_file} 2> ${stderr_file} &" > /dev/null 2>&1 &
   echo "Have runned job ID=$((jobID + 1)) with input from ${input_file}."
 }
 
@@ -40,10 +40,15 @@ schedule_build() {
 }
 
 # Schedules an experiment.
-if [[ $1 == "" ]]; then
-  echo "Please specify parameter."
-  exit
+if [[ "$1" == "build" ]]; then
+  schedule_build
+elif [[ "$1" == "run" ]]; then
+  if [[ $2 == "" ]]; then
+    echo "Please specify parameter."
+    exit
+  fi
+  echo "Begins an experiment with size=$2."
+  schedule_experiment $2
+else
+    echo "Unknown command"
 fi
-echo "Begins an experiment with size=$1"
-schedule_experiment $1
-

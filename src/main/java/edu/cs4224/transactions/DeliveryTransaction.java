@@ -5,11 +5,11 @@ import com.datastax.oss.driver.api.core.cql.Row;
 
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
-import edu.cs4224.ScalingParameters;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class DeliveryTransaction extends BaseTransaction {
   private static final String YET_DELIVERED_ORDER
@@ -52,7 +52,11 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Finds the corresponding order.
       query = String.format(GET_ORDER, warehouseID, i, orderID);
-      Row yetDeliveredOrder = executeQuery(query).get(0);
+      List<Row> orders = executeQuery(query);
+      if (orders.isEmpty()) {
+        return;
+      }
+      Row yetDeliveredOrder = orders.get(0);
       OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(yetDeliveredOrder.getString("o_l_info"));
 
       // Updates the carrier and delivery date.

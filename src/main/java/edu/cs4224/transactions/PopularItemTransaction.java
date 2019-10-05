@@ -2,13 +2,19 @@ package edu.cs4224.transactions;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
+
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
-import edu.cs4224.ScalingParameters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 
-import static edu.cs4224.CqlQueryList.*;
+import static edu.cs4224.CqlQueryList.DISTRICT_NEXT_O_ID;
 
 public class PopularItemTransaction extends BaseTransaction {
 

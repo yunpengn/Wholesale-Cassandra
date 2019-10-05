@@ -4,10 +4,27 @@ import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 
-import static edu.cs4224.ScalingParameters.*;
+import static edu.cs4224.ScalingParameters.SCALE_D_NEXT_O_ID;
+import static edu.cs4224.ScalingParameters.SCALE_D_YTD;
+import static edu.cs4224.ScalingParameters.SCALE_S_ORDER_CNT;
+import static edu.cs4224.ScalingParameters.SCALE_S_QUANTITY;
+import static edu.cs4224.ScalingParameters.SCALE_S_REMOTE_CNT;
+import static edu.cs4224.ScalingParameters.SCALE_S_YTD;
+import static edu.cs4224.ScalingParameters.toDB;
 
 public class DataLoader implements Closeable {
 

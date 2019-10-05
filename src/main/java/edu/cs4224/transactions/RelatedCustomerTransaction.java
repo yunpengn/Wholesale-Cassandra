@@ -2,12 +2,15 @@ package edu.cs4224.transactions;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
+
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class RelatedCustomerTransaction extends BaseTransaction {
 

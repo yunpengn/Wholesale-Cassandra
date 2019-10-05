@@ -5,7 +5,6 @@ import com.datastax.oss.driver.api.core.cql.Row;
 
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
-import edu.cs4224.ScalingParameters;
 
 public class OrderStatusTransaction extends BaseTransaction {
   private static final String GET_CUSTOMER_R
