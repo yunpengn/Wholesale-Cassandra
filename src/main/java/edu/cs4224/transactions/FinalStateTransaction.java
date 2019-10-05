@@ -42,8 +42,8 @@ public class FinalStateTransaction extends BaseTransaction {
     row = executeQuery(QUERY_ORDER).get(0);
     int orderIdSum = row.getInt(0);
     System.out.printf("Sum of orderIDs of all orders: %d\n", orderIdSum);
-    int orderLineCountSum = row.getInt(1);
-    System.out.printf("Sum of orderLine count of all orders: %d\n", orderLineCountSum);
+    double orderLineCountSum = row.getBigDecimal(1).doubleValue();
+    System.out.printf("Sum of orderLine count of all orders: %f\n", orderLineCountSum);
 
     row = executeQuery(QUERY_STOCK).get(0);
     sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
