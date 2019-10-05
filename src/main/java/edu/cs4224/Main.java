@@ -22,7 +22,16 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
+    try {
+      new Main().run(args);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  public void run(String[] args) throws Exception {
     if (args.length != 0) {
       try(DataLoader loader = new DataLoader()) {
         switch (args[0]) {
@@ -120,7 +129,7 @@ public class Main {
     scanner.close();
   }
 
-  private static void generatePerformanceReport(List<Long> latency, long totalTime) {
+  private void generatePerformanceReport(List<Long> latency, long totalTime) {
     // Some magic.
     totalTime = Math.max(totalTime, 1);
 
@@ -142,11 +151,11 @@ public class Main {
     System.err.println("======================================================================");
   }
 
-  private static long toMs(long nanoSeconds) {
+  private long toMs(long nanoSeconds) {
     return TimeUnit.MILLISECONDS.convert(nanoSeconds, TimeUnit.NANOSECONDS);
   }
 
-  private static long getMedian(List<Long> list) {
+  private long getMedian(List<Long> list) {
     long mid = list.get(list.size() / 2);
     if (list.size() % 2 != 0) {
       return mid;
@@ -159,7 +168,7 @@ public class Main {
   /**
    * Assumes the input list is already sorted.
    */
-  private static long getPercentile(List<Long> list, int percentile) {
+  private long getPercentile(List<Long> list, int percentile) {
     int i = list.size() * percentile / 100;
     return list.get(i);
   }
