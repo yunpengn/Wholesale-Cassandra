@@ -10,7 +10,9 @@ public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_DISTRICT = "SELECT SUM(d_ytd), SUM(d_next_o_id) FROM district_w";
   private static final String QUERY_CUSTOMER
       = "SELECT SUM(c_balance), SUM(c_ytd_payment), SUM(c_payment_cnt), SUM(c_delivery_cnt) from customer_w";
-  private static final String QUERY_ORDER = "";
+  private static final String QUERY_ORDER = "SELECT MAX(o_id), SUM(o_ol_cnt) from customer_order";
+  private static final String QUERY_STOCK
+      = "SELECT SUM(s_quantity), SUM(s_ytd), SUM(s_order_cnt), SUM(s_remote_cnt) from stock_w";
 
   public FinalStateTransaction(final CqlSession session, final String[] parameters) {
     super(session, parameters);
@@ -36,6 +38,22 @@ public class FinalStateTransaction extends BaseTransaction {
     System.out.printf("Sum of payment counter of all customers: %f\n", sum);
     sum = ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_C_YTD_PAYMENT);
     System.out.printf("Sum of delivery counter of all customers: %f\n", sum);
+
+    row = executeQuery(QUERY_ORDER).get(0);
+    long orderIdSum = row.getLong(0);
+    System.out.printf("Sum of orderIDs of all orders: %d\n", orderIdSum);
+    long orderLineCountSum = row.getLong(1);
+    System.out.printf("Sum of orderLine count of all orders: %d\n", orderLineCountSum);
+
+    row = executeQuery(QUERY_STOCK).get(0);
+    sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
+    System.out.printf("Sum of quantity of all stocks: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
+    System.out.printf("Sum of year-to-date payment of all stocks: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(2), ScalingParameters.SCALE_S_ORDER_CNT);
+    System.out.printf("Sum of order count of all stocks: %f\n", sum);
+    sum = ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_S_REMOTE_CNT);
+    System.out.printf("Sum of remote order count of all stocks: %f\n", sum);
 
     System.out.println("\n======================================================================");
   }
