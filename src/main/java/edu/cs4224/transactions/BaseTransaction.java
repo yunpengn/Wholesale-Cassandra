@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class BaseTransaction {
   private final String[] parameters;
-  private final CqlSession session;
+  protected final CqlSession session;
 
   public BaseTransaction(final CqlSession session, final String[] parameters) {
     this.session = session;
