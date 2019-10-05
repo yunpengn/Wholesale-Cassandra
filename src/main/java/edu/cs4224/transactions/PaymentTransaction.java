@@ -34,7 +34,7 @@ public class PaymentTransaction extends BaseTransaction {
 
     Row district_info = executeQuery(String.format(CqlQueryList.GET_DISTRICT_INFO, customer_warehouse_id,
             customer_district_id)).get(0);
-    executeQuery(String.format(CqlQueryList.UPDATE_DISTRICT_YTD, payment_amount, customer_warehouse_id,
+    executeQuery(String.format(CqlQueryList.UPDATE_DISTRICT_YTD, ScalingParameters.toDB(payment_amount, ScalingParameters.SCALE_D_YTD), customer_warehouse_id,
             customer_district_id));
 
     Row customer_info = executeQuery(String.format(CqlQueryList.GET_CUSTOMER_INFO, customer_warehouse_id,

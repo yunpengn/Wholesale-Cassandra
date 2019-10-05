@@ -6,6 +6,7 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import edu.cs4224.CqlQueryList;
 import edu.cs4224.OrderlineInfo;
 import edu.cs4224.OrderlineInfoMap;
+import edu.cs4224.ScalingParameters;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -84,12 +85,12 @@ public class NewOrderTransaction extends BaseTransaction {
         String check_stock_quantity_query = String.format(CqlQueryList.CHECK_STOCK_INFO,
                 supplierWareHouse.get(i), itemIds.get(i));
         Row stock_info = executeQuery(check_stock_quantity_query).get(0);
-        double quantity_left = stock_info.getBigDecimal("S_QUANTITY").doubleValue();
+        double quantity_left = ScalingParameters.fromDB(stock_info.getLong("S_QUANTITY"), ScalingParameters.SCALE_S_QUANTITY);
         double adjusted_quantity = quantity_left - quantity.get(i);
         if (adjusted_quantity < 10) adjusted_quantity += 100;
         adjustedQuantities.add(adjusted_quantity);
         int remoteIncrement =  supplierWareHouse.get(i) == warehouseID ? 0 : 1;
-        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, adjusted_quantity, (float)quantity.get(i),
+        String update_stock_query = String.format(CqlQueryList.UPDATE_STOCK, ScalingParameters.toDB( adjusted_quantity - quantity_left, ScalingParameters.SCALE_S_QUANTITY), ScalingParameters.toDB(quantity.get(i), ScalingParameters.SCALE_S_YTD),
                 1, remoteIncrement, supplierWareHouse.get(i), itemIds.get(i));
         executeQuery(update_stock_query);
 

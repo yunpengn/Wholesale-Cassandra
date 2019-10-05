@@ -14,7 +14,7 @@ public class CqlQueryList {
   public static final String CHECK_STOCK_INFO
           = "SELECT S_QUANTITY FROM stock_w WHERE S_W_ID = %d AND S_I_ID = %d";
   public static final String UPDATE_STOCK
-          = "UPDATE stock_w SET S_QUANTITY=%f, S_YTD=S_YTD+%f, S_ORDER_CNT=S_ORDER_CNT+%d, " +
+          = "UPDATE stock_w SET S_QUANTITY=S_QUANTITY+%s, S_YTD=S_YTD=S_YTD+%s, S_ORDER_CNT=S_ORDER_CNT+%d, " +
           "S_REMOTE_CNT=S_REMOTE_CNT+%d WHERE S_W_ID = %d AND S_I_ID = %d";
   public static final String CHECK_ITEM_INFO
           = "SELECT I_PRICE, I_NAME FROM item WHERE I_ID = %d";
@@ -37,7 +37,7 @@ public class CqlQueryList {
   public static final String GET_CUSTOMER_INFO
           = "SELECT * FROM customer_r WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
   public static final String UPDATE_DISTRICT_YTD
-          = "UPDATE district_w SET D_YTD=D_YTD+%f WHERE D_W_ID=%d AND D_ID=%d";
+          = "UPDATE district_w SET D_YTD=D_YTD+%s WHERE D_W_ID=%d AND D_ID=%d";
   public static final String UPDATE_CUSTOMER_INFO
           = "UPDATE customer_w SET C_BALANCE=C_BALANCE - %s, C_YTD_PAYMENT=C_YTD_PAYMENT + %s, C_PAYMENT_CNT=C_PAYMENT_CNT + 1 WHERE C_W_ID=%d AND C_D_ID=%d AND C_ID=%d";
   public static final String GET_CUSTOMER_BALANCE
