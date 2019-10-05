@@ -50,6 +50,7 @@ schedule_kill() {
 
 # Schedules an experiment.
 if [[ "$1" == "build" ]]; then
+  echo "Begins to build on all machines."
   schedule_build
 elif [[ "$1" == "run" ]]; then
   if [[ $2 == "" ]]; then
@@ -59,6 +60,7 @@ elif [[ "$1" == "run" ]]; then
   echo "Begins an experiment with size=$2."
   schedule_experiment $2
 elif [[ "$1" == "kill_all" ]]; then
+  echo "Begins to kill all Java instances."
   schedule_kill
 else
     echo "Unknown command"
