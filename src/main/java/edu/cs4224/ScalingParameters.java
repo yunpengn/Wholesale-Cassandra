@@ -8,12 +8,6 @@ public class ScalingParameters {
   public static final int SCALE_D_YTD = 100;
   public static final int SCALE_D_NEXT_O_ID = 1;
 
-  // Customer
-  public static final int SCALE_C_BALANCE = 100;
-  public static final int SCALE_C_YTD_PAYMENT = 1000;
-  public static final int SCALE_C_PAYMENT_CNT = 1;
-  public static final int SCALE_C_DELIVERY_CNT = 1;
-
   // Stock
   public static final int SCALE_S_QUANTITY = 1;
   public static final int SCALE_S_YTD = 100;

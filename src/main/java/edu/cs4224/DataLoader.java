@@ -80,11 +80,6 @@ public class DataLoader implements Closeable {
     private void customer() throws Exception {
         filePartitioner("customer",
                 (wWriter, data) -> {
-                    scalingCounter(data, 17, SCALE_C_BALANCE);
-                    scalingCounter(data, 18, SCALE_C_YTD_PAYMENT);
-                    scalingCounter(data, 19, SCALE_C_PAYMENT_CNT);
-                    scalingCounter(data, 20, SCALE_C_DELIVERY_CNT);
-
                     wWriter.write(createCSVRow(data, 1, 2, 3, 17, 18, 19, 20));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21));
@@ -194,20 +189,24 @@ public class DataLoader implements Closeable {
     private void addItemOrderList() throws Exception {
         final String query = "UPDATE item SET i_o_id_list = {%s} WHERE i_id = %d";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("data/data-files/order-line.csv"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/temp/order.csv"))) {
             String row;
             Map<Integer, Set<String>> toOrderList = new HashMap<>();
 
             while ((row = reader.readLine()) != null) {
-                String[] parts = row.split(",");
+                String[] parts = row.split("|");
                 String warehouseID = parts[0];
                 String districtID = parts[1];
                 String orderID = parts[2];
-                int itemID = Integer.parseInt(parts[4]);
+                String customerID = parts[3];
+                String infoStr = String.format("'%s-%s-%s-%s'", warehouseID, districtID, orderID, customerID);
 
-                Set<String> orderIDs = toOrderList.getOrDefault(itemID, new HashSet<>());
-                orderIDs.add(String.format("'%s-%s-%s'", warehouseID, districtID, orderID));
-                toOrderList.put(itemID, orderIDs);
+                OrderlineInfoMap infoMap = OrderlineInfoMap.fromJson(parts[8]);
+                infoMap.values().stream().map(OrderlineInfo::getId).forEach(itemID -> {
+                    Set<String> orderIDs = toOrderList.getOrDefault(itemID, new HashSet<>());
+                    orderIDs.add(infoStr);
+                    toOrderList.put(itemID, orderIDs);
+                });
             }
 
             for (Map.Entry<Integer, Set<String>> entry: toOrderList.entrySet()) {

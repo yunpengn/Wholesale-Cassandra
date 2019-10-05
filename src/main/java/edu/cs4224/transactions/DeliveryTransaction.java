@@ -20,8 +20,10 @@ public class DeliveryTransaction extends BaseTransaction {
       = "SELECT o_l_info, o_c_id FROM customer_order WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
   private static final String UPDATE_CARRIER_DELIVERY
       = "UPDATE customer_order SET o_carrier_id = %d, o_l_info = '%s' WHERE o_w_id = %d AND o_d_id = %d AND o_id = %d";
+  private static final String GET_CUSTOMER
+      = "SELECT c_balance, c_delivery_cnt FROM customer_w WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final String UPDATE_CUSTOMER
-      = "UPDATE customer_w SET c_balance = c_balance + %s, c_delivery_cnt = c_delivery_cnt + 1 "
+      = "UPDATE customer_w SET c_balance = %f, c_delivery_cnt = %d "
       + "WHERE c_w_id = %d AND c_d_id = %d AND c_id = %d";
   private static final int NUM_DISTRICTS = 10;
   private static final Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -63,10 +65,15 @@ public class DeliveryTransaction extends BaseTransaction {
       System.out.printf("Going to update order by query %s.\n", query);
       executeQuery(query);
 
-      // Updates the customer.
+      // Finds the customer.
       int customerID = yetDeliveredOrder.getInt("o_c_id");
-      String amountDiff = ScalingParameters.toDB(totalAmount, ScalingParameters.SCALE_C_BALANCE);
-      query = String.format(UPDATE_CUSTOMER, amountDiff, warehouseID, i, customerID);
+      query = String.format(GET_CUSTOMER, warehouseID, i, customerID);
+      Row customer = executeQuery(query).get(0);
+      double newAmount = customer.getBigDecimal("c_balance").doubleValue() + totalAmount;
+      int newDeliveryCount = customer.getInt("c_delivery_cnt") + 1;
+
+      // Updates the customer.
+      query = String.format(UPDATE_CUSTOMER, newAmount, newDeliveryCount, warehouseID, i, customerID);
       System.out.printf("Going to update customer by query %s.\n", query);
       executeQuery(query);
     }
