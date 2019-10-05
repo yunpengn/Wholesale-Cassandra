@@ -34,13 +34,12 @@ public class DataLoader implements Closeable {
         warehouse();
         district();
         customer();
-//        customer_balance();
-//        customer_balance_v2();
         item();
         order_line();
         customer_order();
         stock();
         appendNextDeliveryID();
+        addItemOrderList();
     }
 
     private void warehouse() throws Exception {
@@ -99,52 +98,6 @@ public class DataLoader implements Closeable {
                 "USE wholesale",
                 "COPY customer_r (C_W_ID, C_D_ID, C_ID, C_FIRST, C_MIDDLE, C_LAST, C_STREET_1, C_STREET_2, C_CITY, C_STATE, C_ZIP, C_PHONE, C_SINCE, C_CREDIT, C_CREDIT_LIM, C_DISCOUNT, C_DATA) FROM './data/temp/customer_r.csv' WITH DELIMITER=','"
         );
-    }
-
-    private void customer_balance() throws Exception {
-        try (
-                BufferedWriter writer = new BufferedWriter(new FileWriter("data/temp/customer_balance.csv"))
-        ) {
-            String query = "SELECT C_BALANCE, C_ID FROM wholesale.customer_w WHERE C_W_ID = %d AND C_D_ID = %d";
-            for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
-                int C_W_ID = entry.getKey();
-                for (int C_D_ID : entry.getValue()) {
-                    List<Row> rows = session.execute(String.format(query, C_W_ID, C_D_ID)).all();
-
-                    for (Row row : rows) {
-                        double C_BALANCE = row.getBigDecimal("C_BALANCE").doubleValue();
-                        int C_ID = row.getInt("C_ID");
-
-                        writer.write(String.format("%f,%d,%d,%d", C_BALANCE, C_W_ID, C_D_ID, C_ID));
-                    }
-                }
-            }
-
-            writer.flush();
-        }
-    }
-
-    private void customer_balance_v2() throws IOException {
-        try (
-                BufferedWriter writer = new BufferedWriter(new FileWriter("data/temp/customer_balance_v2.csv"))
-        ) {
-            String query = "SELECT C_BALANCE, C_ID FROM wholesale.customer_w WHERE C_W_ID = %d AND C_D_ID = %d";
-            for (Map.Entry<Integer, Set<Integer>> entry : districtIDs.entrySet()) {
-                int C_W_ID = entry.getKey();
-                for (int C_D_ID : entry.getValue()) {
-                    List<Row> rows = session.execute(String.format(query, C_W_ID, C_D_ID)).all();
-
-                    for (Row row : rows) {
-                        double C_BALANCE = row.getBigDecimal("C_BALANCE").doubleValue();
-                        int C_ID = row.getInt("C_ID");
-
-                        writer.write(String.format("%d,%d,%f,%d", C_W_ID, C_D_ID, C_BALANCE, C_ID));
-                    }
-                }
-            }
-
-            writer.flush();
-        }
     }
 
     private void item() throws Exception {
@@ -234,6 +187,36 @@ public class DataLoader implements Closeable {
 
                 query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = D_NEXT_DELIVERY_O_ID + %d WHERE D_W_ID = %d AND D_ID = %d";
                 session.execute(String.format(query, min, C_W_ID, C_D_ID));
+            }
+        }
+    }
+
+    private void addItemOrderList() throws Exception {
+        final String query = "UPDATE item SET i_o_id_list = {%s} WHERE i_id = %d";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/data-files/order-line.csv"))) {
+            String row;
+            Map<Integer, Set<String>> toOrderList = new HashMap<>();
+
+            while ((row = reader.readLine()) != null) {
+                String[] parts = row.split(",");
+                String warehouseID = parts[0];
+                String districtID = parts[1];
+                String orderID = parts[2];
+                int itemID = Integer.parseInt(parts[4]);
+
+                Set<String> orderIDs = toOrderList.getOrDefault(itemID, new HashSet<>());
+                orderIDs.add(String.format("'%s-%s-%s'", warehouseID, districtID, orderID));
+                toOrderList.put(itemID, orderIDs);
+            }
+
+            for (Map.Entry<Integer, Set<String>> entry: toOrderList.entrySet()) {
+                StringJoiner joiner = new StringJoiner(",");
+                for (String item: entry.getValue()) {
+                    joiner.add(item);
+                }
+
+                session.execute(String.format(query, joiner.toString(), entry.getKey()));
             }
         }
     }

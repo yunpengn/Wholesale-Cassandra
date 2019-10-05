@@ -67,10 +67,10 @@ CREATE TABLE customer_w (
 	// C_CREDIT text,
 	// C_CREDIT_LIM decimal,
 	// C_DISCOUNT decimal,
-	C_BALANCE counter,
-	C_YTD_PAYMENT counter,
-	C_PAYMENT_CNT counter,
-	C_DELIVERY_CNT counter,
+	C_BALANCE decimal,
+	C_YTD_PAYMENT float,
+	C_PAYMENT_CNT int,
+	C_DELIVERY_CNT int,
 	// C_DATA text,
 	PRIMARY KEY ((C_W_ID, C_D_ID), C_ID)
 );
@@ -122,6 +122,7 @@ CREATE TABLE item (
 	I_PRICE decimal, 
 	I_IM_ID int, 
 	I_DATA text,
+	I_O_ID_LIST set<text>,
 	PRIMARY KEY (I_ID)
 );
 
@@ -183,3 +184,9 @@ CREATE TABLE stock_r (
 	S_DATA text,
 	PRIMARY KEY ((S_W_ID, S_I_ID))
 );
+
+DROP MATERIALIZED VIEW IF EXISTS user_balance;
+CREATE MATERIALIZED VIEW user_balance AS
+SELECT C_BALANCE, C_W_ID, C_D_ID, C_ID FROM customer_w
+WHERE c_balance IS NOT NULL AND c_w_id IS NOT NULL AND c_d_id IS NOT NULL AND c_id IS NOT NULL
+    PRIMARY KEY (C_BALANCE, C_W_ID, C_D_ID, C_ID);
