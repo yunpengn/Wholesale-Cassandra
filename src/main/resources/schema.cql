@@ -29,6 +29,7 @@ CREATE TABLE district_w (
 	// D_TAX decimal,
 	D_YTD counter,
 	D_NEXT_O_ID counter,
+	D_NEXT_DELIVERY_O_ID counter,
 	PRIMARY KEY ((D_W_ID, D_ID))
 );
 
@@ -71,7 +72,7 @@ CREATE TABLE customer_w (
 	C_PAYMENT_CNT counter,
 	C_DELIVERY_CNT counter,
 	// C_DATA text,
-	PRIMARY KEY ((C_W_ID, C_D_ID, C_ID))
+	PRIMARY KEY ((C_W_ID, C_D_ID), C_ID)
 );
 
 DROP TABLE IF EXISTS customer_r;
@@ -97,27 +98,8 @@ CREATE TABLE customer_r (
 	// C_PAYMENT_CNT int,
 	// C_DELIVERY_CNT int,
 	C_DATA text,
-	PRIMARY KEY ((C_W_ID, C_D_ID, C_ID))
+	PRIMARY KEY ((C_W_ID, C_D_ID), C_ID)
 );
-
-DROP TABLE IF EXISTS customer_balance;
-CREATE TABLE customer_balance (
-	CB_BALANCE decimal,
-	CB_W_ID int,
-	CB_D_ID int, 
-	CB_ID int,
-	PRIMARY KEY (CB_BALANCE, CB_W_ID, CB_D_ID, CB_ID)
-);
-
-// a second version which sorts on table rather than on query
-DROP TABLE IF EXISTS customer_balance_v2;
-CREATE TABLE customer_balance_v2 (
-    CB_W_ID int,
-	CB_D_ID int,
-	CB_BALANCE decimal,
-	CB_ID int,
-	PRIMARY KEY ((CB_W_ID, CB_D_ID), CB_BALANCE)
-) WITH CLUSTERING ORDER BY (CB_BALANCE DESC);
 
 DROP TABLE IF EXISTS customer_order;
 CREATE TABLE customer_order (
@@ -130,7 +112,7 @@ CREATE TABLE customer_order (
 	O_ALL_LOCAL decimal,
 	O_ENTRY_D timestamp,
 	O_L_INFO text,  // order_line json info
-	PRIMARY KEY ((O_W_ID, O_D_ID, O_ID)),
+	PRIMARY KEY ((O_W_ID, O_D_ID), O_ID),
 );
 
 DROP TABLE IF EXISTS item;
@@ -155,7 +137,7 @@ CREATE TABLE order_line (
 	OL_SUPPLY_W_ID int,
 	OL_QUANTITY decimal,
 	OL_DIST_INFO text,
-	PRIMARY KEY ((OL_W_ID, OL_D_ID, OL_O_ID, OL_NUMBER))
+	PRIMARY KEY ((OL_W_ID, OL_D_ID), OL_O_ID, OL_NUMBER)
 );
 
 DROP TABLE IF EXISTS stock_w;
