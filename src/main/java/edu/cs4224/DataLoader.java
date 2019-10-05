@@ -173,7 +173,7 @@ public class DataLoader implements Closeable {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] rowData = Arrays.asList(line.split(",");
+                String[] rowData = line.split(",");
 
                 String query = "SELECT OL_NUMBER, OL_I_ID, OL_DELIVERY_D, OL_AMOUNT, OL_SUPPLY_W_ID, OL_QUANTITY FROM wholesale.order_line WHERE OL_W_ID = %s AND OL_D_ID = %s AND OL_O_ID = %s";
                 List<Row> rows = session.execute(String.format(query, rowData[0], rowData[1], rowData[2])).all();
