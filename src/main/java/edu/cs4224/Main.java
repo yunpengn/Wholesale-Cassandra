@@ -103,7 +103,7 @@ public class Main {
       txEnd = System.nanoTime();
 
       // Updates the statistics.
-      elapsedTime = TimeUnit.SECONDS.convert(txEnd - txStart, TimeUnit.NANOSECONDS);
+      elapsedTime = txEnd - txStart;
       latency.add(elapsedTime);
     }
     end = System.nanoTime();
