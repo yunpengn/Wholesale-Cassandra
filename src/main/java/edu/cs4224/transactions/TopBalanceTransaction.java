@@ -58,7 +58,7 @@ public class TopBalanceTransaction extends BaseTransaction {
             Row warehouse_info = executeQuery(String.format(SELECT_WAREHOUSE_NAME, infos.get(i).warehouse_id)).get(0);
             Row district_info = executeQuery(String.format(SELECT_DISTRICT_NAME, infos.get(i).warehouse_id, infos.get(i).district_id)).get(0);
 
-            System.out.print(String.format("Customer #%d: Name(%s, %s, %s), Balance(%f), Warehouse(%s), District(%s)", i + 1, customer_info.getString("C_FIRST"),
+            System.out.println(String.format("Customer #%d: Name(%s, %s, %s), Balance(%f), Warehouse(%s), District(%s)", i + 1, customer_info.getString("C_FIRST"),
                     customer_info.getString("C_MIDDLE"), customer_info.getString("C_LAST"), infos.get(i).balance, warehouse_info.getString("W_NAME"), district_info.getString("D_NAME")));
         }
     }
