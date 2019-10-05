@@ -1,10 +1,12 @@
 package edu.cs4224;
 
+import com.alibaba.fastjson.JSON;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
 import java.io.*;
 import java.util.*;
+import static edu.cs4224.ScalingParameters.*;
 
 public class DataLoader implements Closeable {
 
@@ -49,7 +51,8 @@ public class DataLoader implements Closeable {
                 (wWriter, data) -> {
                     addDistrict(data[0], data[1]);
 
-                    data[9] = ((int) Float.parseFloat(data[9]) * 1000) + ""; // D_YTD
+                    scalingCounter(data, 10, SCALE_D_YTD);
+                    scalingCounter(data, 11, SCALE_D_NEXT_O_ID);
 
                     wWriter.write(createCSVRow(data, 1, 2, 10, 11));
                 }, (rWriter, data) -> {
@@ -69,6 +72,11 @@ public class DataLoader implements Closeable {
     private void customer() throws Exception {
         filePartitioner("customer",
                 (wWriter, data) -> {
+                    scalingCounter(data, 17, SCALE_C_BALANCE);
+                    scalingCounter(data, 18, SCALE_C_YTD_PAYMENT);
+                    scalingCounter(data, 19, SCALE_C_PAYMENT_CNT);
+                    scalingCounter(data, 20, SCALE_C_DELIVERY_CNT);
+
                     wWriter.write(createCSVRow(data, 1, 2, 3, 17, 18, 19, 20));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21));
@@ -159,21 +167,33 @@ public class DataLoader implements Closeable {
                 BufferedReader reader = new BufferedReader(new FileReader("data/data-files/order.csv"));
                 BufferedWriter writer = new BufferedWriter(new FileWriter("data/temp/order.csv"))
         ) {
-            String row;
-            while ((row = reader.readLine()) != null) {
-                String[] rowData = row.split(",");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] rowData = line.split(",");
 
                 String query = "SELECT OL_NUMBER, OL_I_ID, OL_DELIVERY_D, OL_AMOUNT, OL_SUPPLY_W_ID, OL_QUANTITY FROM wholesale.order_line WHERE OL_W_ID = %s AND OL_D_ID = %s AND OL_O_ID = %s";
                 List<Row> rows = session.execute(String.format(query, rowData[0], rowData[1], rowData[2])).all();
 
-                // TODO
+                OrderlineInfoMap infoMap = new OrderlineInfoMap(rows);
+
+                writer.append(String.format("%s,%s\n", line, infoMap.toJson()));
             }
+            writer.flush();
         }
+        executeCQLCommand(
+                "USE wholesale",
+                "COPY customer_order (O_W_ID, O_D_ID, O_ID, O_C_ID, O_CARRIER_ID, O_OL_CNT, O_ALL_LOCAL, O_ENTRY_D, O_L_INFO) FROM './data/temp/order.csv'"
+        );
     }
 
     private void stock() throws Exception {
         filePartitioner("stock",
                 (wWriter, data) -> {
+                    scalingCounter(data, 3, SCALE_S_QUANTITY);
+                    scalingCounter(data, 4, SCALE_S_YTD);
+                    scalingCounter(data, 5, SCALE_S_ORDER_CNT);
+                    scalingCounter(data, 6, SCALE_S_REMOTE_CNT);
+
                     wWriter.write(createCSVRow(data, 1, 2, 3, 4, 5, 6));
                 }, (rWriter, data) -> {
                     rWriter.write(createCSVRow(data, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17));
@@ -196,6 +216,10 @@ public class DataLoader implements Closeable {
         Set<Integer> set = districtIDs.getOrDefault(d_w_id, new HashSet<>());
         set.add(d_id);
         districtIDs.put(d_w_id, set);
+    }
+
+    private void scalingCounter(String[] data, int index, int scaleParam) {
+        data[index - 1] = toDB(Double.parseDouble(data[index - 1]), scaleParam);
     }
 
     // colIndexes is an array of integers which indicate the index in data.

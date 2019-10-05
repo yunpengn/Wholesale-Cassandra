@@ -21,11 +21,11 @@ public class ScalingParameters {
   public static final int SCALE_S_REMOTE_CNT = 1;
 
   public static double fromDB(final String input, final int scalingParam) {
-    return Float.parseFloat(input) / scalingParam;
+    return Double.parseDouble(input) / scalingParam;
   }
 
   public static String toDB(final double input, final int scalingParam) {
-    int num = (int) input * scalingParam;
+    long num = (long) input * scalingParam;
     return String.valueOf(num);
   }
 }
