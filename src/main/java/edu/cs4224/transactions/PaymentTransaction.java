@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 
 import edu.cs4224.CqlQueryList;
+import edu.cs4224.ScalingParameters;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -39,10 +40,10 @@ public class PaymentTransaction extends BaseTransaction {
     Row customer_info = executeQuery(String.format(CqlQueryList.GET_CUSTOMER_INFO, customer_warehouse_id,
             customer_district_id, customer_id)).get(0);
 
-    executeQuery(String.format(CqlQueryList.UPDATE_CUSTOMER_INFO, payment_amount, payment_amount,
+    executeQuery(String.format(CqlQueryList.UPDATE_CUSTOMER_INFO, ScalingParameters.toDB(payment_amount, ScalingParameters.SCALE_C_BALANCE), ScalingParameters.toDB(payment_amount, ScalingParameters.SCALE_C_YTD_PAYMENT),
             customer_warehouse_id, customer_district_id, customer_id));
     Row customer_balance = executeQuery(String.format(CqlQueryList.GET_CUSTOMER_BALANCE, customer_warehouse_id, customer_district_id, customer_id)).get(0);
-    double balance = customer_balance.getBigDecimal("C_BALANCE").doubleValue();
+    long balance = customer_balance.getLong("C_BALANCE");
 
     System.out.println("Transaction Summary: ");
     System.out.println(String.format("1. (C_W_ID: %d, C_D_ID: %d, C_ID: %d), Name: (%s, %s, %s), Address: (%s, %s, %s, %s, %s), C_PHONE: %s, C_SINCE: %s, C_CREDIT: %s, C_CREDIT_LIM: %.2f, C_DISCOUNT: %.4f, C_BALANCE: %.2f",
@@ -50,7 +51,7 @@ public class PaymentTransaction extends BaseTransaction {
             customer_info.getString("C_STREET_1"), customer_info.getString("C_STREET_2"), customer_info.getString("C_CITY"),
             customer_info.getString("C_STATE"), customer_info.getString("C_ZIP"), customer_info.getString("C_PHONE"),
             formatter.format(Date.from(customer_info.getInstant("C_SINCE"))), customer_info.getString("C_CREDIT"), customer_info.getBigDecimal("C_CREDIT_LIM").doubleValue(),
-            customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), balance
+            customer_info.getBigDecimal("C_DISCOUNT").doubleValue(), ScalingParameters.fromDB(balance, ScalingParameters.SCALE_C_BALANCE)
     ));
 
     System.out.println(String.format("2. Warehouse: %s, %s, %s, %s, %s",

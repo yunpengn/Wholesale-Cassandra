@@ -119,7 +119,6 @@ public class NewOrderTransaction extends BaseTransaction {
     String user_last_name = customer_info.getString("C_LAST");
     String user_credit_status = customer_info.getString("C_CREDIT");
 
-
     totalAmount = totalAmount * (1 + warehouse_tax + district_tax) * (1 - user_discount);
 
     System.out.println("Transaction Summary:");
