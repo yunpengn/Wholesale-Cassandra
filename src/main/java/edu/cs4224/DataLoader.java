@@ -3,7 +3,6 @@ package edu.cs4224;
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
-import edu.cs4224.transactions.DeliveryTransaction;
 
 import java.io.*;
 import java.util.*;
@@ -32,9 +31,9 @@ public class DataLoader implements Closeable {
     }
 
     public void loadData() throws Exception {
-        warehouse();
-        district();
-//        customer();
+//        warehouse();
+//        district();
+        customer();
 //        customer_balance();
 //        customer_balance_v2();
 //        item();
