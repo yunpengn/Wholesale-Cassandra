@@ -232,7 +232,7 @@ public class DataLoader implements Closeable {
                     }
                 }
 
-                query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = %d WHERE D_W_ID = %d AND D_ID = %d";
+                query = "UPDATE district_w SET D_NEXT_DELIVERY_O_ID = D_NEXT_DELIVERY_O_ID + %d WHERE D_W_ID = %d AND D_ID = %d";
                 session.execute(String.format(query, min, C_W_ID, C_D_ID));
             }
         }
