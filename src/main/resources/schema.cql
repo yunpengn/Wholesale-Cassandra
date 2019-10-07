@@ -1,7 +1,9 @@
+-- Creates the keyspace.
 DROP KEYSPACE IF EXISTS wholesale;
 CREATE KEYSPACE IF NOT EXISTS wholesale WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
 USE wholesale;
 
+-- Creates the tables.
 DROP TABLE IF EXISTS warehouse;
 CREATE TABLE warehouse (
 	W_ID int,
@@ -185,6 +187,7 @@ CREATE TABLE stock_r (
 	PRIMARY KEY ((S_W_ID, S_I_ID))
 );
 
+-- Creates the materialized view(s).
 DROP MATERIALIZED VIEW IF EXISTS user_balance;
 CREATE MATERIALIZED VIEW user_balance AS
 SELECT C_BALANCE, C_W_ID, C_D_ID, C_ID FROM customer_w
