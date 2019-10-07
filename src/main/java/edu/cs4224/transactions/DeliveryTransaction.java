@@ -54,6 +54,7 @@ public class DeliveryTransaction extends BaseTransaction {
       query = String.format(GET_ORDER, warehouseID, i, orderID);
       List<Row> orders = executeQuery(query);
       if (orders.isEmpty()) {
+        System.out.printf("Unable to find order in warehouse=%d, district=%d, orderID=%d.\n", warehouseID, i, orderID);
         return;
       }
       Row yetDeliveredOrder = orders.get(0);
