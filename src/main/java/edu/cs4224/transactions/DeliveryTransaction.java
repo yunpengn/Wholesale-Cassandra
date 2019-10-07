@@ -47,7 +47,7 @@ public class DeliveryTransaction extends BaseTransaction {
           warehouseID, i, orderID);
 
       // Updates the ID of the oldest yet-to-be-delivered order.
-      query = String.format(UPDATE_YET_DELIVERED_ORDER, warehouseID, 1);
+      query = String.format(UPDATE_YET_DELIVERED_ORDER, warehouseID, i);
       executeQuery(query);
 
       // Finds the corresponding order.
