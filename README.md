@@ -18,7 +18,7 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 ## Run Project on Server
 
 - Clone the repository by `git clone git@github.com:yunpengn/Wholesale-Cassandra.git`.
-- Run command `./start.sh run xact_filename` where `xact_filename` is the path of input transaction file.
+- Run command `./start.sh run xact_filename consistency_level` where `xact_filename` is the path of input transaction file and `consistency_level` is the consistency level.
 
 ## Create Schema & Import Data
 
