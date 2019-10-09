@@ -15,11 +15,6 @@ public class StatisticsCalculator {
     private static final String NinetyFivePercentileTransactionLatency = "95th percentile transaction latency: (\\d+)ms";
     private static final String NinetyNinePercentileTransactionLatency = "99th percentile transaction latency: (\\d+)ms";
 
-    public static void main(String[] args) throws Exception {
-        String path = args[0];
-        int NC = Integer.parseInt(args[1]);
-        new StatisticsCalculator().run(path, NC);
-    }
 
     public void run(String logPath, int NC) throws Exception {
         int totalNumberOfTransaction = 0;
