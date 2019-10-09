@@ -49,7 +49,7 @@ public class FinalStateTransaction extends BaseTransaction {
     double orderLineCountSum = 0;
     for (int i = 1; i < NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_ORDER, i);
-      System.out.printf("Performing slow query on order: %s", query);
+      System.out.printf("Performing slow query on order: %s\n", query);
       row = executeQuery(query).get(0);
 
       orderIdSum += row.getInt(0);
@@ -64,7 +64,7 @@ public class FinalStateTransaction extends BaseTransaction {
     double remoteCount = 0;
     for (int i = 1; i <= NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_STOCK, i);
-      System.out.printf("Performing slow query on stock: %s", query);
+      System.out.printf("Performing slow query on stock: %s\n", query);
       row = executeQuery(query).get(0);
 
       quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
