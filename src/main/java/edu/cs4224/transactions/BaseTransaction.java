@@ -1,8 +1,11 @@
 package edu.cs4224.transactions;
 
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 
 import java.util.List;
 
@@ -35,7 +38,10 @@ public abstract class BaseTransaction {
   public abstract void execute(String[] dataLines);
 
   protected List<Row> executeQuery(String query) {
-    ResultSet resultSet = session.execute(query);
+    SimpleStatement statement = new SimpleStatementBuilder(query)
+        .setConsistencyLevel(ConsistencyLevel.EACH_QUORUM)
+        .build();
+    ResultSet resultSet = session.execute(statement);
     return resultSet.all();
   }
 }
