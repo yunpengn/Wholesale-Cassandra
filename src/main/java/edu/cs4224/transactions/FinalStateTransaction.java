@@ -15,6 +15,7 @@ public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_STOCK = "SELECT SUM(s_quantity), SUM(s_ytd), "
       + "SUM(s_order_cnt), SUM(s_remote_cnt) from stock_w WHERE s_w_id = %d ALLOW FILTERING";
   private static final int NUM_WAREHOUSES = 10;
+  private static final int SLOW_QUERY_TIMEOUT = 20;
 
   public FinalStateTransaction(final CqlSession session, final String[] parameters) {
     super(session, parameters);
@@ -46,7 +47,7 @@ public class FinalStateTransaction extends BaseTransaction {
     for (int i = 1; i < NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_ORDER, i);
       System.out.printf("Performing slow query on order: %s\n", query);
-      row = executeQuery(query).get(0);
+      row = executeQuery(query, SLOW_QUERY_TIMEOUT).get(0);
 
       orderIdSum += row.getInt(0);
       orderLineCountSum += row.getBigDecimal(1).doubleValue();
@@ -61,7 +62,7 @@ public class FinalStateTransaction extends BaseTransaction {
     for (int i = 1; i <= NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_STOCK, i);
       System.out.printf("Performing slow query on stock: %s\n", query);
-      row = executeQuery(query, 20).get(0);
+      row = executeQuery(query, SLOW_QUERY_TIMEOUT).get(0);
 
       quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
       ytd += ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
