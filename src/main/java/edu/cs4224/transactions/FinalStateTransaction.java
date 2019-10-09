@@ -65,7 +65,10 @@ public class FinalStateTransaction extends BaseTransaction {
     for (int i = 1; i <= NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_STOCK, i);
       System.out.printf("Performing slow query on stock: %s\n", query);
-      row = executeQuery(query).get(0);
+      SimpleStatement statement = new SimpleStatementBuilder(query)
+          .setTimeout(Duration.ofSeconds(20))
+          .build();
+      row = session.execute(statement).one();
 
       quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
       ytd += ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
