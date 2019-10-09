@@ -26,6 +26,7 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 - Unzip the downloaded file.
 - Create the schema by `./start.sh createschema`.
 - Import data by `./start.sh loaddata`.
+- Calculate Statistic by `./start.sh st path_of_log_folder number_of_concurrency`.
 
 ## Licence
 

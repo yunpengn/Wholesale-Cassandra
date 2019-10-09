@@ -42,6 +42,9 @@ public class Main {
             System.out.println("start to load data");
             loader.loadData();
             break;
+          case "st":
+            StatisticsCalculator.main(args);
+            break;
           case "run":
             run(args);
             break;

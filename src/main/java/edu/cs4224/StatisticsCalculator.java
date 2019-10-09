@@ -21,7 +21,7 @@ public class StatisticsCalculator {
         new StatisticsCalculator().run(path, NC);
     }
 
-    private void run(String logPath, int NC) throws Exception {
+    public void run(String logPath, int NC) throws Exception {
         int totalNumberOfTransaction = 0;
         int totalExecutionTime = -1;
         int transactionThroughput = 0;
