@@ -14,7 +14,8 @@ public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_DISTRICT = "SELECT SUM(d_ytd), SUM(d_next_o_id) FROM district_w";
   private static final String QUERY_CUSTOMER
       = "SELECT SUM(c_balance), SUM(c_ytd_payment), SUM(c_payment_cnt), SUM(c_delivery_cnt) from customer_w";
-  private static final String QUERY_ORDER = "SELECT MAX(o_id), SUM(o_ol_cnt) from customer_order";
+  private static final String QUERY_ORDER = "SELECT MAX(o_id), SUM(o_ol_cnt) "
+      + "from customer_order WHERE o_w_id = %d ALLOW FILTERING";
   private static final String QUERY_STOCK = "SELECT SUM(s_quantity), SUM(s_ytd), "
       + "SUM(s_order_cnt), SUM(s_remote_cnt) from stock_w WHERE s_w_id = %d ALLOW FILTERING";
   private static final int NUM_WAREHOUSES = 10;
@@ -44,10 +45,17 @@ public class FinalStateTransaction extends BaseTransaction {
     int deliveryCounterSum = row.getInt(3);
     System.out.printf("Sum of delivery counter of all customers: %d\n", deliveryCounterSum);
 
-    row = executeQuery(QUERY_ORDER).get(0);
-    int orderIdSum = row.getInt(0);
+    int orderIdSum = 0;
+    double orderLineCountSum = 0;
+    for (int i = 1; i < NUM_WAREHOUSES; i++) {
+      String query = String.format(QUERY_ORDER, i);
+      System.out.printf("Performing slow query on order: %s", query);
+      row = executeQuery(query).get(0);
+
+      orderIdSum += row.getInt(0);
+      orderLineCountSum += row.getBigDecimal(1).doubleValue();
+    }
     System.out.printf("Sum of orderIDs of all orders: %d\n", orderIdSum);
-    double orderLineCountSum = row.getBigDecimal(1).doubleValue();
     System.out.printf("Sum of orderLine count of all orders: %f\n", orderLineCountSum);
 
     double quantity = 0;
