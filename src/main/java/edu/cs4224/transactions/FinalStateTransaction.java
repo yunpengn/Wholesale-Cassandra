@@ -15,8 +15,9 @@ public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_CUSTOMER
       = "SELECT SUM(c_balance), SUM(c_ytd_payment), SUM(c_payment_cnt), SUM(c_delivery_cnt) from customer_w";
   private static final String QUERY_ORDER = "SELECT MAX(o_id), SUM(o_ol_cnt) from customer_order";
-  private static final String QUERY_STOCK
-      = "SELECT SUM(s_quantity), SUM(s_ytd), SUM(s_order_cnt), SUM(s_remote_cnt) from stock_w";
+  private static final String QUERY_STOCK = "SELECT SUM(s_quantity), SUM(s_ytd), "
+      + "SUM(s_order_cnt), SUM(s_remote_cnt) from stock_w WHERE s_w_id = %d ALLOW FILTERING";
+  private static final int NUM_WAREHOUSES = 10;
 
   public FinalStateTransaction(final CqlSession session, final String[] parameters) {
     super(session, parameters);
@@ -49,18 +50,23 @@ public class FinalStateTransaction extends BaseTransaction {
     double orderLineCountSum = row.getBigDecimal(1).doubleValue();
     System.out.printf("Sum of orderLine count of all orders: %f\n", orderLineCountSum);
 
-    SimpleStatement statement = new SimpleStatementBuilder(QUERY_STOCK)
-        .setTimeout(Duration.ofHours(1))
-        .build();
-    row = session.execute(statement).one();
-    sum = ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
-    System.out.printf("Sum of quantity of all stocks: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
-    System.out.printf("Sum of year-to-date payment of all stocks: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(2), ScalingParameters.SCALE_S_ORDER_CNT);
-    System.out.printf("Sum of order count of all stocks: %f\n", sum);
-    sum = ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_S_REMOTE_CNT);
-    System.out.printf("Sum of remote order count of all stocks: %f\n", sum);
+    double quantity = 0;
+    double ytd = 0;
+    double orderCount = 0;
+    double remoteCount = 0;
+    for (int i = 1; i <= NUM_WAREHOUSES; i++) {
+      String query = String.format(QUERY_STOCK, i);
+      row = executeQuery(query).get(0);
+
+      quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
+      ytd += ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
+      orderCount += ScalingParameters.fromDB(row.getLong(2), ScalingParameters.SCALE_S_ORDER_CNT);
+      remoteCount += ScalingParameters.fromDB(row.getLong(3), ScalingParameters.SCALE_S_REMOTE_CNT);
+    }
+    System.out.printf("Sum of quantity of all stocks: %f\n", quantity);
+    System.out.printf("Sum of year-to-date payment of all stocks: %f\n", ytd);
+    System.out.printf("Sum of order count of all stocks: %f\n", orderCount);
+    System.out.printf("Sum of remote order count of all stocks: %f\n", remoteCount);
 
     System.out.println("\n======================================================================");
   }
