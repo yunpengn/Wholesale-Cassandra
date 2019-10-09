@@ -7,7 +7,7 @@ data_path="$project_path/data/data-files"
 run() {
     cd $project_path
     ./gradlew shadowJar
-    java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar < $1
+    java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar run $2 < $1
 }
 
 create_schema() {
@@ -23,7 +23,7 @@ load_data() {
 }
 
 if [[ "$1" == "run" ]]; then
-    run $2
+    run $2 $3
 elif [[ "$1" == "createschema" ]]; then
     create_schema
 elif [[ "$1" == "loaddata" ]]; then

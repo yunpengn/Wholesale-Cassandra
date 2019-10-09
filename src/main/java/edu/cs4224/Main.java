@@ -31,7 +31,7 @@ public class Main {
     }
   }
 
-  public void run(String[] args) throws Exception {
+  public void init(String[] args) throws Exception{
     if (args.length != 0) {
       try(DataLoader loader = new DataLoader()) {
         switch (args[0]) {
@@ -43,19 +43,24 @@ public class Main {
             System.out.println("start to load data");
             loader.loadData();
             break;
+          case "run":
+            run(args);
+            break;
           default:
             throw new Exception("Unknown command");
         }
       }
-      return;
     }
+  }
 
+  public void run(String[] args) throws Exception {
+    String consistencyLevel = args[1];
     // Initializes the resources needed.
     CqlSession session = CqlSession.builder().
         withKeyspace(CqlIdentifier.fromCql("wholesale")).
         build();
     Scanner scanner = new Scanner(System.in);
-    System.out.println("The system has been started.");
+    System.out.println("The system has been started with consistency level " + consistencyLevel);
 
     // Some variables for statistics.
     List<Long> latency = new ArrayList<>();
@@ -97,6 +102,8 @@ public class Main {
       default:
         throw new Exception("Unknown transaction types");
       }
+
+      transaction.setConsistencyLevel(consistencyLevel);
 
       // Reads the data lines.
       int numOfDataLines = transaction.numOfDataLines();

@@ -15,6 +15,7 @@ import java.util.List;
 public abstract class BaseTransaction {
   private final String[] parameters;
   protected final CqlSession session;
+  private ConsistencyLevel consistencyLevel = ConsistencyLevel.ONE;
 
   public BaseTransaction(final CqlSession session, final String[] parameters) {
     this.session = session;
@@ -39,9 +40,21 @@ public abstract class BaseTransaction {
 
   protected List<Row> executeQuery(String query) {
     SimpleStatement statement = new SimpleStatementBuilder(query)
-        .setConsistencyLevel(ConsistencyLevel.EACH_QUORUM)
+        .setConsistencyLevel(consistencyLevel)
         .build();
     ResultSet resultSet = session.execute(statement);
     return resultSet.all();
+  }
+
+
+  public void setConsistencyLevel(String consistencyLevel) {
+    switch (consistencyLevel) {
+      case "ONE":
+        this.consistencyLevel = ConsistencyLevel.ONE;
+        break;
+      case "QUORUM":
+        this.consistencyLevel = ConsistencyLevel.QUORUM;
+        break;
+    }
   }
 }
