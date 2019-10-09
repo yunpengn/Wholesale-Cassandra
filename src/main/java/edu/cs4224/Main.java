@@ -2,7 +2,6 @@ package edu.cs4224;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.google.gson.Gson;
 
 import edu.cs4224.transactions.BaseTransaction;
 import edu.cs4224.transactions.DeliveryTransaction;

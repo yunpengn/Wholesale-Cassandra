@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -38,6 +39,12 @@ public abstract class BaseTransaction {
    */
   public abstract void execute(String[] dataLines);
 
+  /**
+   * Executes a given query string.
+   *
+   * @param query is the given query string.
+   * @return all rows in the result set.
+   */
   protected List<Row> executeQuery(String query) {
     SimpleStatementBuilder statementBuilder = new SimpleStatementBuilder(query);
     SimpleStatement statement;
@@ -54,6 +61,21 @@ public abstract class BaseTransaction {
     return resultSet.all();
   }
 
+  /**
+   * Executes a given query string.
+   *
+   * @param query is the given query string.
+   * @param timeoutInSeconds is the length of timeout in seconds.
+   * @return all rows in the result set.
+   */
+  protected List<Row> executeQuery(String query, int timeoutInSeconds) {
+    SimpleStatement statement = new SimpleStatementBuilder(query)
+        .setConsistencyLevel(consistencyLevel)
+        .setTimeout(Duration.ofSeconds(timeoutInSeconds))
+        .build();
+    ResultSet resultSet = session.execute(statement);
+    return resultSet.all();
+  }
 
   public void setConsistencyLevel(String consistencyLevel) {
     this.consistencyLevel = consistencyLevel;
