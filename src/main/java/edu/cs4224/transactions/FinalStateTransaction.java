@@ -2,12 +2,8 @@ package edu.cs4224.transactions;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
-import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 
 import edu.cs4224.ScalingParameters;
-
-import java.time.Duration;
 
 public class FinalStateTransaction extends BaseTransaction {
   private static final String QUERY_WAREHOUSE = "SELECT SUM(w_ytd) FROM warehouse";
@@ -65,10 +61,7 @@ public class FinalStateTransaction extends BaseTransaction {
     for (int i = 1; i <= NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_STOCK, i);
       System.out.printf("Performing slow query on stock: %s\n", query);
-      SimpleStatement statement = new SimpleStatementBuilder(query)
-          .setTimeout(Duration.ofSeconds(20))
-          .build();
-      row = session.execute(statement).one();
+      row = executeQuery(query, 20).get(0);
 
       quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
       ytd += ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_S_YTD);
