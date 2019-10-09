@@ -56,6 +56,7 @@ public class FinalStateTransaction extends BaseTransaction {
     double remoteCount = 0;
     for (int i = 1; i <= NUM_WAREHOUSES; i++) {
       String query = String.format(QUERY_STOCK, i);
+      System.out.printf("Performing slow query on stock: %s", query);
       row = executeQuery(query).get(0);
 
       quantity += ScalingParameters.fromDB(row.getLong(0), ScalingParameters.SCALE_S_QUANTITY);
