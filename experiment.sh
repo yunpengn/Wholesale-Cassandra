@@ -3,6 +3,7 @@
 # Schedules a job on a certain machine.
 schedule_job() {
   jobID=$1
+  consistencyLevel=$2
   echo "Begins to schedule job with job ID=$((jobID + 1)):"
 
   machineID="xcnd$((25 + $jobID % 5))"
@@ -11,7 +12,7 @@ schedule_job() {
   input_file="data/xact-files/$((jobID + 1)).txt"
   stdout_file="log/$((jobID + 1)).out.log"
   stderr_file="log/$((jobID + 1)).err.log"
-  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar < ${input_file} > ${stdout_file} 2> ${stderr_file} &" > /dev/null 2>&1 &
+  ssh $machineID "cd /temp/cs4224f/Wholesale-Cassandra && java -jar build/libs/Wholesale-Cassandra-1.0-SNAPSHOT-all.jar run ${consistencyLevel} < ${input_file} > ${stdout_file} 2> ${stderr_file} &" > /dev/null 2>&1 &
   echo "Have runned job ID=$((jobID + 1)) with input from ${input_file}."
 }
 
@@ -26,7 +27,7 @@ schedule_experiment() {
 
   # Schedules job one-by-one.
   for ((c=0; c<$1; c++)); do
-    schedule_job $c
+    schedule_job $c $2
   done
 }
 
@@ -54,11 +55,15 @@ if [[ "$1" == "build" ]]; then
   schedule_build
 elif [[ "$1" == "run" ]]; then
   if [[ $2 == "" ]]; then
-    echo "Please specify parameter."
+    echo "Please specify # of Java instances."
+    exit
+  fi
+  if [[ $3 == "" ]]; then
+    echo "Please specify consistency level."
     exit
   fi
   echo "Begins an experiment with size=$2."
-  schedule_experiment $2
+  schedule_experiment $2 $3
 elif [[ "$1" == "kill_all" ]]; then
   echo "Begins to kill all Java instances."
   schedule_kill

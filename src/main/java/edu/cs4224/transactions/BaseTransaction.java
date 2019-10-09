@@ -46,17 +46,9 @@ public abstract class BaseTransaction {
    * @return all rows in the result set.
    */
   protected List<Row> executeQuery(String query) {
-    SimpleStatementBuilder statementBuilder = new SimpleStatementBuilder(query);
-    SimpleStatement statement;
-    if (consistencyLevel.equals("ALL_ONE")) {
-      if (query.startsWith("SELECT")) {
-        statement = statementBuilder.setConsistencyLevel(ConsistencyLevel.ONE).build();
-      } else {
-        statement = statementBuilder.setConsistencyLevel(ConsistencyLevel.ALL).build();
-      }
-    } else {
-      statement = statementBuilder.setConsistencyLevel(ConsistencyLevel.QUORUM).build();
-    }
+    SimpleStatement statement = new SimpleStatementBuilder(query)
+        .setConsistencyLevel(getConsistencyLevel(query))
+        .build();
     ResultSet resultSet = session.execute(statement);
     return resultSet.all();
   }
@@ -70,11 +62,23 @@ public abstract class BaseTransaction {
    */
   protected List<Row> executeQuery(String query, int timeoutInSeconds) {
     SimpleStatement statement = new SimpleStatementBuilder(query)
-        .setConsistencyLevel(consistencyLevel)
+        .setConsistencyLevel(getConsistencyLevel(query))
         .setTimeout(Duration.ofSeconds(timeoutInSeconds))
         .build();
     ResultSet resultSet = session.execute(statement);
     return resultSet.all();
+  }
+
+  private ConsistencyLevel getConsistencyLevel(String query) {
+    if (consistencyLevel.equals("ALL_ONE")) {
+      if (query.startsWith("SELECT")) {
+        return ConsistencyLevel.ONE;
+      } else {
+        return ConsistencyLevel.ALL;
+      }
+    } else {
+      return ConsistencyLevel.QUORUM;
+    }
   }
 
   public void setConsistencyLevel(String consistencyLevel) {
