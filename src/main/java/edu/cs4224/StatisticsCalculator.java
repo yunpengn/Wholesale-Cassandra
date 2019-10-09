@@ -20,6 +20,7 @@ public class StatisticsCalculator {
         int totalNumberOfTransaction = 0;
         int totalExecutionTime = -1;
         int transactionThroughput = 0;
+        int percentile95 = 0;
 
         for (int i = 1; i <= NC; i++) {
             String log = fetchLog(logPath, i);
@@ -27,11 +28,13 @@ public class StatisticsCalculator {
             totalNumberOfTransaction += regex(log, TotalNumberOfTransaction);
             totalExecutionTime = Math.max(totalExecutionTime, regex(log, TotalElapsedTime));
             transactionThroughput += regex(log, TransactionThroughput);
+            percentile95 += regex(log, NinetyFivePercentileTransactionLatency);
         }
 
         System.out.println("totalNumberOfTransaction: "+ totalNumberOfTransaction);
         System.out.println("totalExecutionTime: " + totalExecutionTime);
         System.out.println("transactionThroughput: " + (transactionThroughput * 1.0 / NC));
+        System.out.println("95th percentile latency: " + (percentile95 * 1.0 / NC));
     }
 
     private String fetchLog(String logPath, int index) throws Exception {
