@@ -15,18 +15,32 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
 - Click `Import Project` and select `build.gradle`.
 - Wait for Gradle to complete the setup.
 
+## Setup Server Environment
+
+- For each server that will be a Cassandra node:
+    - Make sure you have installed Java 8 on the server.
+    - Follow the guide [here](http://cassandra.apache.org/doc/latest/getting_started/installing.html) to install Cassandra.
+    - Modify `cassandra.yaml` accordingly to fit your use cases.
+    - Start Cassandra.
+- Clone the repository by `git clone git@github.com:yunpengn/Wholesale-Cassandra.git` to the servers where the Java application will be run.
+
 ## Run Project on Server
 
-- Clone the repository by `git clone git@github.com:yunpengn/Wholesale-Cassandra.git`.
-- Run command `./start.sh run xact_filename consistency_level` where `xact_filename` is the path of input transaction file and `consistency_level` is the consistency level.
-
-## Create Schema & Import Data
-
-- Download data from [here](https://www.comp.nus.edu.sg/~cs4224/project-files.zip) to the `data/` folder.
-- Unzip the downloaded file.
-- Create the schema by `./start.sh createschema`.
-- Import data by `./start.sh loaddata`.
-- Calculate Statistic by `./start.sh st path_of_log_folder number_of_concurrency`.
+- To create the database schema:
+    - Login to any Cassandra node and run `./start.sh createschema`.
+- To import data:
+    - Download data from [here](https://www.comp.nus.edu.sg/~cs4224/project-files.zip).
+    - Unzip the downloaded file and put it into `data/` folder.
+    - Run `./start.sh loaddata`.
+- To run a single Java instance:
+    - Use the command `./start.sh run xact_filename consistency_level` where `xact_filename` is the path of input transaction file and `consistency_level` is the consistency level.
+- To conduct an experiment:
+    - Make sure you are in a shell of which you have access to all 5 Cassandra nodes.
+    - Run `./experiment.sh build` to pull the latest code and compile the Java instances.
+    - Run `./experiment.sh run NC consistency_level` to conduct an experiment with `NC` number of clients and `consistency_level` being the consistency level.
+- After an experiment is done:
+    - Retrieve the output from all servers by `scp -r cs4224f@xcnd??:/temp/cs4224f/Wholesale-Cassandra/log/*.err.log ~/Downloads/log/`.
+    - Calculate Statistic by `./start.sh st path_of_log_folder NC` where `path_of_log_folder` is the path to the folder in which `*.err.log` are saved and `NC` is the number of Java instances in the experiment.
 
 ## Licence
 
