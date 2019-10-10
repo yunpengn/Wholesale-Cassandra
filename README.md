@@ -42,6 +42,40 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
     - Retrieve the output from all servers by `scp -r cs4224f@xcnd??:/temp/cs4224f/Wholesale-Cassandra/log/*.err.log ~/Downloads/log/`.
     - Calculate Statistic by `./start.sh st path_of_log_folder NC` where `path_of_log_folder` is the path to the folder in which `*.err.log` are saved and `NC` is the number of Java instances in the experiment.
 
+## Check your SSH connection to all 5 servers
+
+- We assume you have SSH access to all 5 nodes: `xcnd25`, `xcnd26`, `xcnd27`, `xcnd28` and `xcnd29`. This has been enforced in the experiment script. Otherwise, you will not be able to conduct an experiment using the given script.
+- To obtain SSH access to these 5 nodes:
+    - Put your public key in the file `/home/stuproj/cs4224f/.ssh/authorized_keys`.
+    - In your local computer, add the following lines to `~/.ssh/config`:
+
+```
+Host xcnd25
+    HostName <ip_or_domain_name>
+    IdentityFile ~/.ssh/<private_key>
+    User cs4224f
+
+Host xcnd26
+    HostName <ip_or_domain_name>
+    IdentityFile ~/.ssh/<private_key>
+    User cs4224f
+
+Host xcnd27
+    HostName <ip_or_domain_name>
+    IdentityFile ~/.ssh/<private_key>
+    User cs4224f
+
+Host xcnd28
+    HostName <ip_or_domain_name>
+    IdentityFile ~/.ssh/<private_key>
+    User cs4224f
+
+Host xcnd29
+    HostName <ip_or_domain_name>
+    IdentityFile ~/.ssh/<private_key>
+    User cs4224f
+```
+
 ## Licence
 
 [GNU General Public Licence 3.0](LICENSE)
