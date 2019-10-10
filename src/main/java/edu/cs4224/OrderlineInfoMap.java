@@ -7,20 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 
 public class OrderlineInfoMap extends HashMap<Integer, OrderlineInfo> {
-    public OrderlineInfoMap() {
-    }
+  public OrderlineInfoMap() {
+  }
 
-    public OrderlineInfoMap(List<Row> rows) {
-        for (Row row: rows) {
-            this.put(row.getInt("OL_NUMBER"), new OrderlineInfo(row));
-        }
+  public OrderlineInfoMap(List<Row> rows) {
+    for (Row row : rows) {
+      this.put(row.getInt("OL_NUMBER"), new OrderlineInfo(row));
     }
+  }
 
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
+  public String toJson() {
+    return new Gson().toJson(this);
+  }
 
-    public static OrderlineInfoMap fromJson(String json) {
-        return new Gson().fromJson(json, OrderlineInfoMap.class);
-    }
+  public static OrderlineInfoMap fromJson(String json) {
+    return new Gson().fromJson(json, OrderlineInfoMap.class);
+  }
 }

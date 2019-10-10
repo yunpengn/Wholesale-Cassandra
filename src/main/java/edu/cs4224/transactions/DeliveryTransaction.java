@@ -62,7 +62,7 @@ public class DeliveryTransaction extends BaseTransaction {
 
       // Updates the carrier and delivery date.
       double totalAmount = 0;
-      for (OrderlineInfo orderLine: orderLines.values()) {
+      for (OrderlineInfo orderLine : orderLines.values()) {
         totalAmount += orderLine.getAmount();
         orderLine.setDelivery(formatter.format(new Date()));
       }

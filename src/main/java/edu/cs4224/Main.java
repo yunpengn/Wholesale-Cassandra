@@ -30,32 +30,32 @@ public class Main {
     }
   }
 
-  public void init(String[] args) throws Exception{
+  public void init(String[] args) throws Exception {
     if (args.length != 0) {
       switch (args[0]) {
-        case "createschema":
-          System.out.println("start to load schema");
-          try(DataLoader loader = new DataLoader()) {
-            loader.loadSchema();
-          }
-          break;
-        case "loaddata":
-          System.out.println("start to load data");
-          try(DataLoader loader = new DataLoader()) {
-            loader.loadData();
-          }
-          break;
-        case "st":
-          new StatisticsCalculator().run(args[1], Integer.parseInt(args[2]));
-          break;
-        case "strip":
-          new StatisticsCalculator().stripStatisticLog(args[1]);
-          break;
-        case "run":
-          run(args);
-          break;
-        default:
-          throw new Exception("Unknown command");
+      case "createschema":
+        System.out.println("start to load schema");
+        try (DataLoader loader = new DataLoader()) {
+          loader.loadSchema();
+        }
+        break;
+      case "loaddata":
+        System.out.println("start to load data");
+        try (DataLoader loader = new DataLoader()) {
+          loader.loadData();
+        }
+        break;
+      case "st":
+        new StatisticsCalculator().run(args[1], Integer.parseInt(args[2]));
+        break;
+      case "strip":
+        new StatisticsCalculator().stripStatisticLog(args[1]);
+        break;
+      case "run":
+        run(args);
+        break;
+      default:
+        throw new Exception("Unknown command");
       }
     }
   }

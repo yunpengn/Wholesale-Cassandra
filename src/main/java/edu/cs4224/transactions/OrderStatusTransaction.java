@@ -51,7 +51,7 @@ public class OrderStatusTransaction extends BaseTransaction {
 
     // Retrieves each orderLine from JSON content.
     OrderlineInfoMap orderLines = OrderlineInfoMap.fromJson(lastOrder.getString("o_l_info"));
-    for (OrderlineInfo orderLine: orderLines.values()) {
+    for (OrderlineInfo orderLine : orderLines.values()) {
       System.out.printf("Order line in last order item ID: %d, supply warehouse ID: %d, "
               + "quantity: %f, price: %f, delivery date: %s\n",
           orderLine.getId(),
