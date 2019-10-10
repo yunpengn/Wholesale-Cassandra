@@ -30,7 +30,7 @@ This is the Wholesale project implemented with Cassandra. It is part of the requ
     - Login to any Cassandra node and run `./start.sh createschema`.
 - To import data:
     - Download data from [here](https://www.comp.nus.edu.sg/~cs4224/project-files.zip).
-    - Unzip the downloaded file and put it into `data/` folder.
+    - Unzip the downloaded file and put extracted folders (`data-files/` & `xact-files/`) under `data/` folder.
     - Run `./start.sh loaddata`.
 - To run a single Java instance:
     - Use the command `./start.sh run xact_filename consistency_level` where `xact_filename` is the path of input transaction file and `consistency_level` is the consistency level.
