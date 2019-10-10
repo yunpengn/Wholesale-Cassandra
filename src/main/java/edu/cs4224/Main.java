@@ -48,6 +48,9 @@ public class Main {
         case "st":
           new StatisticsCalculator().run(args[1], Integer.parseInt(args[2]));
           break;
+        case "strip":
+          new StatisticsCalculator().stripStatisticLog(args[1]);
+          break;
         case "run":
           run(args);
           break;
