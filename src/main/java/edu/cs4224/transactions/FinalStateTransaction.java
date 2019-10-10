@@ -32,7 +32,7 @@ public class FinalStateTransaction extends BaseTransaction {
     sum = ScalingParameters.fromDB(row.getLong(1), ScalingParameters.SCALE_D_NEXT_O_ID);
     System.out.printf("Sum of next orderIDs in all districts: %f\n", sum);
 
-    row = executeQuery(QUERY_CUSTOMER).get(0);
+    row = executeQuery(QUERY_CUSTOMER, SLOW_QUERY_TIMEOUT).get(0);
     sum = row.getBigDecimal(0).doubleValue();
     System.out.printf("Sum of balance of all customers: %f\n", sum);
     sum = row.getFloat(1);
